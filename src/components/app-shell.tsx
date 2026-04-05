@@ -6,10 +6,12 @@ import { Menu, MoonStar, ShieldCheck } from "lucide-react";
 import clsx from "clsx";
 import { BottomNav } from "@/components/bottom-nav";
 import { BrandMark } from "@/components/brand-mark";
+import { useAuthSession } from "@/lib/use-auth-session";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const immersive = pathname === "/processing";
+  const { isSignedIn, user } = useAuthSession();
 
   return (
     <div className={clsx(immersive ? "immersive-canvas" : "app-canvas")}>
@@ -28,11 +30,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <BrandMark compact />
 
               <Link
-                href="/settings"
+                href={isSignedIn ? "/settings" : "/sign-in"}
                 className="secondary-cta size-10 shrink-0"
-                aria-label="Privacy settings"
+                aria-label={isSignedIn ? "Privacy settings" : "Log in"}
+                title={isSignedIn ? user?.email ?? "Settings" : "Log in"}
               >
-                <ShieldCheck className="size-4" />
+                {isSignedIn ? (
+                  <ShieldCheck className="size-4" />
+                ) : (
+                  <span className="text-[0.62rem] font-bold uppercase tracking-[0.12em]">
+                    Log
+                  </span>
+                )}
               </Link>
             </div>
           </header>

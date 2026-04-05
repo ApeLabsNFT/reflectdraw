@@ -1,16 +1,45 @@
 import type { Metadata } from "next";
-import { Manrope, Noto_Serif } from "next/font/google";
+import localFont from "next/font/local";
 import { AppProviders } from "@/components/app-providers";
 import "./globals.css";
 
-const manrope = Manrope({
+const manrope = localFont({
+  src: [
+    {
+      path: "./fonts/manrope-400.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/manrope-600.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "./fonts/manrope-700.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-manrope",
-  subsets: ["latin"],
+  display: "swap",
 });
 
-const notoSerif = Noto_Serif({
+const notoSerif = localFont({
+  src: [
+    {
+      path: "./fonts/noto-serif-400.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/noto-serif-700.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-noto-serif",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

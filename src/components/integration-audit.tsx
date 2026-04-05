@@ -187,9 +187,9 @@ export function IntegrationAudit() {
               icon: ShieldCheck,
             },
             {
-              name: "Google AI",
-              role: "Multimodal fallback",
-              note: "Useful for image understanding, multimodal experiments, and redundancy.",
+              name: "Google AI / Gemma 3",
+              role: "Scoped reflection engine",
+              note: "Configured as the Gemma-ready provider for multimodal understanding, structured JSON output, and in-scope reflective feedback.",
               icon: Cpu,
             },
             {

@@ -11,7 +11,10 @@ let posthogStarted = false;
 
 function PostHogLayer({ children }: { children: React.ReactNode }) {
   const [analyticsConsent] = useBooleanPreference("analytics-consent", false);
-  const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+  const posthogKey =
+    process.env.NEXT_PUBLIC_POSTHOG_KEY ??
+    process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN ??
+    process.env.NEXT_PUBLIC_POSTHOG_TOKEN;
   const posthogHost =
     process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
 

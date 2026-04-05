@@ -1,19 +1,22 @@
 "use client";
 
-import { startTransition, useDeferredValue, useState } from "react";
+import { startTransition, useDeferredValue, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Camera,
+  Check,
   ImagePlus,
   LoaderCircle,
   PenLine,
+  Smartphone,
   Wind,
 } from "lucide-react";
 import type { CapturePayload } from "@/lib/contracts";
 import { capturePayloadSchema } from "@/lib/contracts";
 import { breathPractices } from "@/lib/demo-data";
 import { trackClientEvent } from "@/lib/analytics";
+import { useBooleanPreference } from "@/lib/preferences";
 import { writeLatestRun } from "@/lib/storage";
 
 const resonanceOptions = [
@@ -44,15 +47,40 @@ const wordOptions = [
 
 export function CaptureRitual() {
   const router = useRouter();
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const [selectedResonance, setSelectedResonance] = useState("Expansive");
   const [selectedTone, setSelectedTone] =
     useState<CapturePayload["preferredTone"]>("softly-held");
   const [selectedWords, setSelectedWords] = useState<string[]>(["soft", "open"]);
   const [freeText, setFreeText] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string>();
+  const [imageMimeType, setImageMimeType] = useState<string>();
+  const [selectedSourceType, setSelectedSourceType] =
+    useState<CapturePayload["sourceType"]>("upload");
+  const [deviceCapabilities, setDeviceCapabilities] = useState({
+    camera: false,
+    share: false,
+    haptics: false,
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const deferredText = useDeferredValue(freeText);
+  const [hapticsEnabled] = useBooleanPreference("haptics-enabled", true);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    setDeviceCapabilities({
+      camera:
+        typeof navigator !== "undefined" &&
+        (Boolean(navigator.mediaDevices) ||
+          /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)),
+      share: typeof navigator !== "undefined" && typeof navigator.share === "function",
+      haptics:
+        typeof navigator !== "undefined" && typeof navigator.vibrate === "function",
+    });
+  }, []);
 
   async function fileToDataUrl(file: File) {
     return await new Promise<string>((resolve, reject) => {
@@ -67,6 +95,33 @@ export function CaptureRitual() {
       };
       reader.onerror = () => reject(new Error("Unable to read image"));
       reader.readAsDataURL(file);
+    });
+  }
+
+  function pulse(pattern: number | number[] = 14) {
+    if (
+      !hapticsEnabled ||
+      typeof navigator === "undefined" ||
+      typeof navigator.vibrate !== "function"
+    ) {
+      return;
+    }
+
+    navigator.vibrate(pattern);
+  }
+
+  async function handleImageSelection(
+    file: File,
+    sourceType: CapturePayload["sourceType"],
+  ) {
+    const nextPreview = await fileToDataUrl(file);
+    setPreviewUrl(nextPreview);
+    setImageMimeType(file.type || "image/jpeg");
+    setSelectedSourceType(sourceType);
+    pulse([12, 24, 18]);
+    trackClientEvent("capture_image_uploaded", {
+      mime_type: file.type || "unknown",
+      source: sourceType,
     });
   }
 
@@ -93,9 +148,10 @@ export function CaptureRitual() {
         threeWords: selectedWords,
         freeText,
         preferredTone: selectedTone,
-        sourceType: previewUrl ? "upload" : "camera",
+        sourceType: previewUrl ? selectedSourceType : "upload",
         selectedResonance,
         previewUrl,
+        imageMimeType,
       });
 
       trackClientEvent("reflection_submission_started", {
@@ -105,18 +161,27 @@ export function CaptureRitual() {
         words_selected: selectedWords.length,
       });
 
-      const response = await fetch("/api/demo/reflect", {
+      const response = await fetch("/api/reflect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      const reflectResponse =
+        response.ok
+          ? response
+          : await fetch("/api/demo/reflect", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
 
-      if (!response.ok) {
+      if (!reflectResponse.ok) {
         throw new Error("Unable to create reflection");
       }
 
-      const run = await response.json();
+      const run = await reflectResponse.json();
       writeLatestRun(run);
+      pulse([18, 30, 18]);
       trackClientEvent("reflection_submission_succeeded", {
         has_image: Boolean(previewUrl),
         breath_mode: run.reflection.breathMode,
@@ -174,39 +239,111 @@ export function CaptureRitual() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3 px-2 pb-1 pt-4">
-          <label className="secondary-cta h-12 cursor-pointer px-4 text-sm font-semibold">
-            <ImagePlus className="size-4" />
-            Upload image
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={async (event) => {
-                const file = event.target.files?.[0];
-                if (!file) return;
-
-                try {
-                  const nextPreview = await fileToDataUrl(file);
-                  setPreviewUrl(nextPreview);
-                  trackClientEvent("capture_image_uploaded", {
-                    mime_type: file.type || "unknown",
-                    source: "upload",
-                  });
-                } catch (uploadError) {
-                  setError(
-                    uploadError instanceof Error
-                      ? uploadError.message
-                      : "Unable to read the selected image.",
-                  );
-                }
-              }}
-            />
-          </label>
-          <button type="button" className="secondary-cta h-12 px-4 text-sm font-semibold">
+        <div className="grid gap-3 px-2 pb-1 pt-4">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => cameraInputRef.current?.click()}
+              className="secondary-cta h-12 px-4 text-sm font-semibold"
+            >
+              <Camera className="size-4" />
+              Use camera
+            </button>
+            <button
+              type="button"
+              onClick={() => galleryInputRef.current?.click()}
+              className="secondary-cta h-12 px-4 text-sm font-semibold"
+            >
+              <ImagePlus className="size-4" />
+              Photo library
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setPreviewUrl(undefined);
+              setImageMimeType(undefined);
+            }}
+            className="secondary-cta h-12 px-4 text-sm font-semibold"
+          >
             <PenLine className="size-4" />
             Text-only ritual
           </button>
+
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={async (event) => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+
+              try {
+                await handleImageSelection(file, "camera");
+              } catch (uploadError) {
+                setError(
+                  uploadError instanceof Error
+                    ? uploadError.message
+                    : "Unable to read the selected camera image.",
+                );
+              }
+            }}
+          />
+          <input
+            ref={galleryInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={async (event) => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+
+              try {
+                await handleImageSelection(file, "upload");
+              } catch (uploadError) {
+                setError(
+                  uploadError instanceof Error
+                    ? uploadError.message
+                    : "Unable to read the selected image.",
+                );
+              }
+            }}
+          />
+        </div>
+      </section>
+
+      <section className="surface-panel-soft rounded-[2rem] p-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="eyebrow">Phone features</p>
+          <span className="text-xs text-[rgba(117,123,116,0.78)]">
+            Progressive enhancement
+          </span>
+        </div>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          {[
+            {
+              label: "Camera",
+              ready: deviceCapabilities.camera,
+            },
+            {
+              label: "Share",
+              ready: deviceCapabilities.share,
+            },
+            {
+              label: "Haptics",
+              ready: deviceCapabilities.haptics && hapticsEnabled,
+            },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="surface-panel flex items-center justify-center gap-2 rounded-[1.4rem] px-3 py-3 text-xs font-semibold"
+            >
+              {item.ready ? <Check className="size-3.5 text-[var(--sage)]" /> : <Smartphone className="size-3.5 text-[rgba(117,123,116,0.72)]" />}
+              {item.label}
+            </div>
+          ))}
         </div>
       </section>
 

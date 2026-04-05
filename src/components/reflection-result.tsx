@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, MoonStar, Sparkles, Wind } from "lucide-react";
 import type { Artifact, Comparison, Reflection } from "@/lib/contracts";
 import { ArtworkTile } from "@/components/artwork-tile";
+import { ShareReflectionButton } from "@/components/share-reflection-button";
 import { formatDayMonth, formatFullDate } from "@/lib/utils";
 
 export function ReflectionResult({
@@ -159,13 +160,14 @@ export function ReflectionResult({
             <Wind className="size-4" />
             Closing breath
           </Link>
-          <Link
-            href="/archive"
-            className="secondary-cta h-14 w-full px-4 text-sm font-semibold"
-          >
-            Back to archive
-          </Link>
+          <ShareReflectionButton />
         </div>
+        <Link
+          href="/archive"
+          className="secondary-cta h-14 w-full px-4 text-sm font-semibold"
+        >
+          Back to archive
+        </Link>
       </section>
     </div>
   );

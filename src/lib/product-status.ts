@@ -16,6 +16,10 @@ export type IntegrationStatus = {
   missingKeys: string[];
 };
 
+function pickFirst(...values: Array<string | undefined>) {
+  return values.find((value) => Boolean(value));
+}
+
 function hasAll(...values: Array<string | undefined>) {
   return values.every((value) => Boolean(value));
 }
@@ -41,6 +45,13 @@ function evaluateKeys(
 
 export function getFeatureStatuses(): FeatureStatus[] {
   return [
+    {
+      id: "landing",
+      name: "Landing Journey",
+      route: "/",
+      status: "working",
+      summary: "Entry experience now introduces the product, legal framing, and auth paths.",
+    },
     {
       id: "onboarding",
       name: "Onboarding",
@@ -119,6 +130,20 @@ export function getFeatureStatuses(): FeatureStatus[] {
       summary: "Feature audit and provider readiness view are now built into the app.",
     },
     {
+      id: "auth",
+      name: "Login and Sign Up",
+      route: "/sign-up",
+      status: "working",
+      summary: "Email auth screens are live and connect to Supabase once auth keys are present.",
+    },
+    {
+      id: "legal",
+      name: "Terms and Privacy",
+      route: "/terms",
+      status: "working",
+      summary: "Legal and privacy documents are available as part of the user journey.",
+    },
+    {
       id: "production-backend",
       name: "Production Backend",
       route: "/integrations",
@@ -130,14 +155,22 @@ export function getFeatureStatuses(): FeatureStatus[] {
 
 export function getIntegrationStatuses(): IntegrationStatus[] {
   const env = process.env;
+  const supabasePublicKey = pickFirst(
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  );
+  const supabaseServerKey = pickFirst(
+    env.SUPABASE_SERVICE_ROLE_KEY,
+    env.SUPABASE_SECRET_KEY,
+  );
   const supabaseKeys = evaluateKeys(
     env,
+    ["NEXT_PUBLIC_SUPABASE_URL"],
     [
-      "NEXT_PUBLIC_SUPABASE_URL",
       "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
       "SUPABASE_SERVICE_ROLE_KEY",
-    ],
-    [
+      "SUPABASE_SECRET_KEY",
       "SUPABASE_PROJECT_REF",
       "SUPABASE_DB_PASSWORD",
       "SUPABASE_DB_URL",
@@ -177,8 +210,13 @@ export function getIntegrationStatuses(): IntegrationStatus[] {
   ]);
   const posthogKeys = evaluateKeys(
     env,
-    ["NEXT_PUBLIC_POSTHOG_KEY"],
+    [],
     ["NEXT_PUBLIC_POSTHOG_HOST", "POSTHOG_PROJECT_API_KEY"],
+  );
+  const hasPostHogKey = hasAny(
+    env.NEXT_PUBLIC_POSTHOG_KEY,
+    env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN,
+    env.NEXT_PUBLIC_POSTHOG_TOKEN,
   );
   const sentryKeys = {
     presentKeys: [
@@ -199,16 +237,14 @@ export function getIntegrationStatuses(): IntegrationStatus[] {
       id: "supabase",
       name: "Supabase",
       category: "core",
-      status: hasAll(
-        env.NEXT_PUBLIC_SUPABASE_URL,
-        env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-        env.SUPABASE_SERVICE_ROLE_KEY,
-      )
+      status: hasAll(env.NEXT_PUBLIC_SUPABASE_URL, supabasePublicKey, supabaseServerKey)
         ? "connected"
         : hasAny(
             env.NEXT_PUBLIC_SUPABASE_URL,
             env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+            env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
             env.SUPABASE_SERVICE_ROLE_KEY,
+            env.SUPABASE_SECRET_KEY,
             env.SUPABASE_PROJECT_REF,
             env.SUPABASE_DB_PASSWORD,
           )
@@ -217,7 +253,15 @@ export function getIntegrationStatuses(): IntegrationStatus[] {
       summary:
         "Auth, Postgres, Storage, RLS, and Edge Functions backbone.",
       presentKeys: supabaseKeys.presentKeys,
-      missingKeys: supabaseKeys.missingKeys,
+      missingKeys: [
+        ...supabaseKeys.missingKeys,
+        ...(supabasePublicKey
+          ? []
+          : ["NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"]),
+        ...(supabaseServerKey
+          ? []
+          : ["SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SECRET_KEY"]),
+      ],
     },
     {
       id: "clerk",
@@ -261,14 +305,17 @@ export function getIntegrationStatuses(): IntegrationStatus[] {
     },
     {
       id: "google",
-      name: "Google AI",
+      name: "Google AI / Gemma 3",
       category: "ai",
       status: hasAny(env.GOOGLE_GENERATIVE_AI_API_KEY, env.GEMINI_API_KEY)
         ? "connected"
         : "demo",
       summary:
-        "Good option for multimodal image understanding and fallback analysis.",
-      presentKeys: googleKeys.presentKeys,
+        "Primary Gemma 3-ready multimodal reflection provider with scoped JSON output.",
+      presentKeys: [
+        ...googleKeys.presentKeys,
+        ...(env.GOOGLE_GEMMA_MODEL ? ["GOOGLE_GEMMA_MODEL"] : []),
+      ],
       missingKeys: googleKeys.missingKeys,
     },
     {
@@ -325,13 +372,24 @@ export function getIntegrationStatuses(): IntegrationStatus[] {
       id: "posthog",
       name: "PostHog",
       category: "ops",
-      status: hasAny(env.NEXT_PUBLIC_POSTHOG_KEY, env.POSTHOG_PROJECT_API_KEY)
+      status: hasPostHogKey
         ? "connected"
         : "missing",
       summary:
         "Privacy-aware product analytics gated by explicit in-app consent.",
-      presentKeys: posthogKeys.presentKeys,
-      missingKeys: posthogKeys.missingKeys,
+      presentKeys: [
+        ...posthogKeys.presentKeys,
+        ...(env.NEXT_PUBLIC_POSTHOG_KEY ? ["NEXT_PUBLIC_POSTHOG_KEY"] : []),
+        ...(env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN
+          ? ["NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN"]
+          : []),
+        ...(env.NEXT_PUBLIC_POSTHOG_TOKEN ? ["NEXT_PUBLIC_POSTHOG_TOKEN"] : []),
+      ],
+      missingKeys: hasPostHogKey
+        ? []
+        : [
+            "NEXT_PUBLIC_POSTHOG_KEY or NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN or NEXT_PUBLIC_POSTHOG_TOKEN",
+          ],
     },
     {
       id: "sentry",

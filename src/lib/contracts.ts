@@ -115,6 +115,7 @@ export const capturePayloadSchema = z.object({
   sourceType: z.enum(["camera", "upload"]),
   selectedResonance: z.string(),
   previewUrl: z.string().optional(),
+  imageMimeType: z.string().optional(),
 });
 
 export const demoRunSchema = z.object({

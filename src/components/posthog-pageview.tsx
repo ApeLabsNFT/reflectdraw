@@ -1,28 +1,30 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import posthog from "posthog-js";
 import { useBooleanPreference } from "@/lib/preferences";
 
 export function PostHogPageview() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [analyticsConsent] = useBooleanPreference("analytics-consent", false);
-  const query = searchParams.toString();
+  const posthogKey =
+    process.env.NEXT_PUBLIC_POSTHOG_KEY ??
+    process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN ??
+    process.env.NEXT_PUBLIC_POSTHOG_TOKEN;
 
   useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_POSTHOG_KEY || !analyticsConsent) {
+    if (!posthogKey || !analyticsConsent || typeof window === "undefined") {
       return;
     }
 
-    const url = `${window.location.origin}${pathname}${query ? `?${query}` : ""}`;
+    const url = window.location.href;
 
     posthog.capture("$pageview", {
       pathname,
       url,
     });
-  }, [analyticsConsent, pathname, query]);
+  }, [analyticsConsent, pathname, posthogKey]);
 
   return null;
 }

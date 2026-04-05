@@ -5,6 +5,8 @@ import {
   ChevronRight,
   HeartPulse,
   Layers3,
+  LogIn,
+  LogOut,
   ShieldCheck,
   ToggleLeft,
   ToggleRight,
@@ -12,6 +14,7 @@ import {
 } from "lucide-react";
 import { seedProfile } from "@/lib/demo-data";
 import { useBooleanPreference } from "@/lib/preferences";
+import { useAuthSession } from "@/lib/use-auth-session";
 import { initialsFromName } from "@/lib/utils";
 
 function SettingToggle({
@@ -49,6 +52,8 @@ function SettingToggle({
 }
 
 export function SettingsPanel() {
+  const { client, isSignedIn, user } = useAuthSession();
+
   return (
     <div className="route-section space-y-6 pt-1 pb-6">
       <section className="surface-panel rounded-[2.5rem] px-5 py-6 text-center">
@@ -65,6 +70,9 @@ export function SettingsPanel() {
           <p className="muted-copy text-sm">
             Nervous system care, soft privacy boundaries, and rituals that stay
             in your control.
+          </p>
+          <p className="text-sm text-[rgba(117,123,116,0.88)]">
+            {isSignedIn ? `Signed in as ${user?.email ?? "your account"}` : "Guest mode is active until auth is connected."}
           </p>
         </div>
       </section>
@@ -138,6 +146,22 @@ export function SettingsPanel() {
         ))}
 
         <Link
+          href="/privacy"
+          className="surface-panel-soft flex w-full items-center justify-between rounded-[1.8rem] px-4 py-4 text-left"
+        >
+          <span className="font-medium text-[var(--charcoal)]">Privacy policy</span>
+          <ChevronRight className="size-4 text-[rgba(117,123,116,0.72)]" />
+        </Link>
+
+        <Link
+          href="/terms"
+          className="surface-panel-soft flex w-full items-center justify-between rounded-[1.8rem] px-4 py-4 text-left"
+        >
+          <span className="font-medium text-[var(--charcoal)]">Terms and conditions</span>
+          <ChevronRight className="size-4 text-[rgba(117,123,116,0.72)]" />
+        </Link>
+
+        <Link
           href="/integrations"
           className="surface-panel flex w-full items-center justify-between rounded-[1.8rem] px-4 py-4 text-left"
         >
@@ -154,6 +178,45 @@ export function SettingsPanel() {
           </div>
           <ChevronRight className="size-4 text-[rgba(117,123,116,0.72)]" />
         </Link>
+
+        {isSignedIn ? (
+          <button
+            type="button"
+            onClick={() => void client?.auth.signOut()}
+            className="surface-panel flex w-full items-center justify-between rounded-[1.8rem] px-4 py-4 text-left"
+          >
+            <div className="flex items-center gap-3">
+              <span className="secondary-cta size-10">
+                <LogOut className="size-4" />
+              </span>
+              <div>
+                <p className="font-medium text-[var(--charcoal)]">Sign out</p>
+                <p className="mt-1 text-sm text-[rgba(117,123,116,0.88)]">
+                  End the current device session.
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="size-4 text-[rgba(117,123,116,0.72)]" />
+          </button>
+        ) : (
+          <Link
+            href="/sign-in"
+            className="surface-panel flex w-full items-center justify-between rounded-[1.8rem] px-4 py-4 text-left"
+          >
+            <div className="flex items-center gap-3">
+              <span className="secondary-cta size-10">
+                <LogIn className="size-4" />
+              </span>
+              <div>
+                <p className="font-medium text-[var(--charcoal)]">Log in or sign up</p>
+                <p className="mt-1 text-sm text-[rgba(117,123,116,0.88)]">
+                  Save your archive and ritual preferences across devices.
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="size-4 text-[rgba(117,123,116,0.72)]" />
+          </Link>
+        )}
       </section>
 
       <section className="surface-panel rounded-[2rem] p-5">
