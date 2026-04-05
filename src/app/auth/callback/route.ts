@@ -8,7 +8,8 @@ export async function GET(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") ?? "/welcome";
+  const requestedNext = requestUrl.searchParams.get("next") ?? "/welcome";
+  const next = requestedNext.startsWith("/") ? requestedNext : "/welcome";
   const nextUrl = new URL(next, requestUrl.origin);
   const response = NextResponse.redirect(nextUrl);
 
