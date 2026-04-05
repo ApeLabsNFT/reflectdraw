@@ -40,55 +40,63 @@ export function ArchiveFeed() {
   }, [activeFilter, artifacts, query]);
 
   const featured = filteredArtifacts[0];
-  const secondary = filteredArtifacts.slice(1, 3);
-  const archiveList = filteredArtifacts.slice(3);
+  const secondary = filteredArtifacts.slice(1, 5);
 
   return (
     <div className="route-section space-y-6">
-      <section className="space-y-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-3">
-            <p className="serif-heading max-w-[16rem] text-balance text-[3.2rem] leading-[0.92]">
-              {isSignedIn ? sanctuaryLabel : "Preview the sanctuary archive."}
-            </p>
-            <p className="muted-copy max-w-sm text-sm">
-              {isSignedIn
-                ? `Welcome back, ${displayName}. This is where drawings, breath-linked rituals, and longer arcs gather over time.`
-                : "Guest preview mode is open, but new members now move through auth and onboarding before the full archive experience begins."}
-            </p>
-          </div>
-          <Link href="/capture" className="primary-cta mt-1 size-12 shrink-0">
-            <Plus className="size-5" />
-          </Link>
+      <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div className="space-y-4">
+          <p className="eyebrow">Archive</p>
+          <h1 className="serif-heading max-w-[10ch] text-balance text-[clamp(3rem,6vw,5.6rem)] leading-[0.9] text-[var(--charcoal)]">
+            {isSignedIn ? sanctuaryLabel : "Preview the sanctuary."}
+          </h1>
+          <p className="muted-copy max-w-[42rem] text-[0.98rem]">
+            {isSignedIn
+              ? `Welcome back, ${displayName}. This is where your drawings, rituals, and quieter patterns begin to accumulate over time.`
+              : "Guest preview mode is open. Sign in when you're ready to save reflections, build continuity, and unlock the full journey."}
+          </p>
         </div>
 
-        {!isSignedIn ? (
-          <div className="surface-panel rounded-[2rem] p-4">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="eyebrow">Guest preview</p>
-                <p className="mt-2 text-sm leading-7 text-[rgba(117,123,116,0.9)]">
-                  Browse the ritual archive, then use the new auth journey when you&apos;re
-                  ready to save reflections and begin onboarding properly.
-                </p>
-              </div>
-              <Link
-                href="/auth"
-                className="primary-cta h-11 shrink-0 px-4 text-xs font-semibold tracking-[0.14em] uppercase"
-              >
-                Join now
-              </Link>
-            </div>
-          </div>
-        ) : null}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Link href="/capture" className="primary-cta h-14 px-5 text-sm font-semibold">
+            <Plus className="size-4" />
+            New ritual
+          </Link>
+          <Link href="/compare" className="secondary-cta h-14 px-5 text-sm font-semibold">
+            Compare over time
+          </Link>
+        </div>
+      </section>
 
+      {!isSignedIn ? (
+        <section className="surface-panel rounded-[1.9rem] p-5">
+          <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="eyebrow">Guest preview</p>
+              <p className="mt-3 max-w-[44rem] text-sm leading-7 text-[rgba(105,113,107,0.92)]">
+                Explore the archive and ritual pacing first. When you join, the app
+                moves you through auth, onboarding, and directly back into this space
+                with your own saved continuity.
+              </p>
+            </div>
+            <Link
+              href="/auth"
+              className="primary-cta h-12 px-5 text-xs font-semibold tracking-[0.14em] uppercase"
+            >
+              Join ReflectDraw
+            </Link>
+          </div>
+        </section>
+      ) : null}
+
+      <section className="grid gap-3 lg:grid-cols-[1fr_auto]">
         <label className="soft-input flex items-center gap-3 px-4 py-3">
-          <Search className="size-4 text-[rgba(117,123,116,0.9)]" />
+          <Search className="size-4 text-[rgba(105,113,107,0.9)]" />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search by title, state, or rhythm"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-[rgba(117,123,116,0.68)]"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-[rgba(105,113,107,0.64)]"
           />
         </label>
 
@@ -108,115 +116,88 @@ export function ArchiveFeed() {
       </section>
 
       {featured ? (
-        <Link
-          href={
-            featured.id.startsWith("artifact-")
-              ? "/artifact/latest"
-              : `/artifact/${featured.id}`
-          }
-          className="block"
-        >
-          <section className="surface-panel-soft overflow-hidden rounded-[2.3rem] p-3">
+        <section className="grid gap-4 xl:grid-cols-[1.16fr_0.84fr]">
+          <Link
+            href={
+              featured.id.startsWith("artifact-")
+                ? "/artifact/latest"
+                : `/artifact/${featured.id}`
+            }
+            className="surface-panel overflow-hidden rounded-[2.2rem] p-3"
+          >
             <ArtworkTile
               artifact={featured}
-              className="aspect-[0.92]"
+              className="aspect-[1.18] lg:aspect-[1.28]"
               title={featured.title}
-              subtitle={`${formatDayMonth(featured.capturedAt)} • ${featured.coreInsight}`}
+              subtitle={`${formatDayMonth(featured.capturedAt)} / ${featured.coreInsight}`}
             />
-            <div className="flex items-start justify-between gap-4 px-2 pb-1 pt-4">
+            <div className="grid gap-4 px-2 pb-2 pt-5 lg:grid-cols-[1fr_auto] lg:items-end">
               <div className="space-y-2">
                 <p className="eyebrow">Featured reflection</p>
-                <p className="muted-copy max-w-[15rem] text-sm">
+                <p className="font-serif text-[2.4rem] leading-[0.98] text-[var(--charcoal)]">
+                  {featured.title}
+                </p>
+                <p className="max-w-[36rem] text-sm leading-7 text-[rgba(105,113,107,0.92)]">
                   {featured.coreInsight}
                 </p>
               </div>
-              <span className="secondary-cta size-11 shrink-0">
+              <span className="secondary-cta size-12 shrink-0">
                 <ArrowRight className="size-4" />
               </span>
             </div>
-          </section>
-        </Link>
+          </Link>
+
+          <div className="grid gap-4">
+            <Link href="/sanctuary" className="surface-panel rounded-[2rem] p-5">
+              <div className="secondary-cta size-11">
+                <Wind className="size-5" />
+              </div>
+              <p className="mt-4 font-serif text-[2rem] leading-[1] text-[var(--charcoal)]">
+                Regulate first.
+              </p>
+              <p className="mt-3 text-sm leading-7 text-[rgba(105,113,107,0.9)]">
+                Arrival breath, extended exhale, and quieter nighttime pacing live here.
+              </p>
+            </Link>
+
+            <section className="surface-panel-soft rounded-[2rem] p-5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="eyebrow">Prompt retrieval</p>
+                  <p className="mt-2 font-semibold text-[var(--charcoal)]">
+                    Start from a quieter question.
+                  </p>
+                </div>
+                <Link href="/capture" className="secondary-cta size-11">
+                  <ArrowRight className="size-4" />
+                </Link>
+              </div>
+              <div className="mt-4 grid gap-2">
+                {promptLibrary.slice(0, 3).map((prompt) => (
+                  <div key={prompt} className="surface-panel rounded-[1.4rem] p-4">
+                    <p className="text-sm leading-7 text-[var(--charcoal)]">{prompt}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </section>
       ) : null}
 
-      <section className="grid grid-cols-2 gap-3">
-        <Link href="/compare" className="surface-panel rounded-[2rem] p-4">
-          <p className="eyebrow">Compare over time</p>
-          <p className="mt-3 font-serif text-[1.8rem] leading-[1.02] text-[var(--charcoal)]">
-            Notice what changed.
-          </p>
-          <p className="mt-2 text-sm text-[rgba(117,123,116,0.9)]">
-            Soft summaries across your recent reflections.
-          </p>
-        </Link>
-        <Link href="/sanctuary" className="surface-panel rounded-[2rem] p-4">
-          <div className="secondary-cta size-11">
-            <Wind className="size-5" />
-          </div>
-          <p className="mt-4 font-serif text-[1.8rem] leading-[1.02] text-[var(--charcoal)]">
-            Ground first.
-          </p>
-          <p className="mt-2 text-sm text-[rgba(117,123,116,0.9)]">
-            Arrival, extended exhale, and quiet-night rituals.
-          </p>
-        </Link>
-      </section>
-
-      <section className="grid grid-cols-2 gap-3">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {secondary.map((artifact) => (
           <Link
             key={artifact.id}
             href={`/artifact/${artifact.id}`}
-            className="surface-panel-soft rounded-[2rem] p-3"
+            className="surface-panel-soft rounded-[1.8rem] p-3"
           >
-            <ArtworkTile artifact={artifact} className="aspect-square" />
-            <div className="space-y-1 px-1 pt-3">
+            <ArtworkTile artifact={artifact} className="aspect-[0.96]" />
+            <div className="space-y-2 px-1 pt-4">
               <p className="eyebrow">Captured {formatDayMonth(artifact.capturedAt)}</p>
-              <p className="font-serif text-[1.55rem] leading-[1.02] text-[var(--charcoal)]">
+              <p className="font-serif text-[1.65rem] leading-[1.02] text-[var(--charcoal)]">
                 {artifact.title}
               </p>
-              <p className="text-sm text-[rgba(117,123,116,0.9)]">
-                {artifact.coreInsight}
-              </p>
-            </div>
-          </Link>
-        ))}
-      </section>
-
-      <section className="surface-panel rounded-[2rem] p-5">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="eyebrow">Prompt retrieval</p>
-            <p className="mt-2 font-semibold text-[var(--charcoal)]">
-              Start from a quieter question.
-            </p>
-          </div>
-          <Link href="/capture" className="secondary-cta size-11">
-            <ArrowRight className="size-4" />
-          </Link>
-        </div>
-        <div className="mt-4 grid gap-2">
-          {promptLibrary.slice(0, 3).map((prompt) => (
-            <div key={prompt} className="surface-panel-soft rounded-[1.6rem] p-4">
-              <p className="text-sm font-medium text-[var(--charcoal)]">{prompt}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="space-y-3 pb-6">
-        {archiveList.map((artifact) => (
-          <Link
-            key={artifact.id}
-            href={`/artifact/${artifact.id}`}
-            className="surface-panel-soft grid grid-cols-[92px_1fr] gap-3 rounded-[1.9rem] p-3"
-          >
-            <ArtworkTile artifact={artifact} className="aspect-square h-[92px]" />
-            <div className="space-y-2 py-1">
-              <p className="eyebrow">Captured {formatDayMonth(artifact.capturedAt)}</p>
-              <p className="font-serif text-[1.45rem] leading-[1.02] text-[var(--charcoal)]">
-                {artifact.title}
-              </p>
-              <p className="text-sm text-[rgba(117,123,116,0.9)]">
+              <p className="text-sm leading-7 text-[rgba(105,113,107,0.9)]">
                 {artifact.coreInsight}
               </p>
             </div>

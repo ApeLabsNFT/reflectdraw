@@ -28,7 +28,7 @@ export function WelcomeTransition() {
       <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[920px] flex-col">
         <header className="route-section flex items-center justify-between gap-3">
           <div className="glass-soft-dark inline-flex items-center rounded-full px-4 py-3">
-            <BrandMark href="/" />
+            <BrandMark href="/" tone="light" />
           </div>
           <div className="glass-soft-dark inline-flex h-12 items-center rounded-full px-5 text-xs font-semibold tracking-[0.14em] text-white uppercase">
             Routing your journey

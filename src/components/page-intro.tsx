@@ -12,13 +12,13 @@ export function PageIntro({
   actions?: ReactNode;
 }) {
   return (
-    <section className="route-section space-y-4 pt-1">
+    <section className="route-section space-y-4 pt-1 lg:space-y-5">
       <p className="eyebrow">{eyebrow}</p>
       <div className="space-y-3">
-        <h1 className="serif-heading text-balance text-[clamp(2.6rem,10vw,4rem)] leading-[0.94] text-[var(--charcoal)]">
+        <h1 className="serif-heading max-w-[14ch] text-balance text-[clamp(2.8rem,7vw,4.8rem)] leading-[0.92] text-[var(--charcoal)]">
           {title}
         </h1>
-        <p className="muted-copy max-w-md text-[0.98rem]">{description}</p>
+        <p className="muted-copy max-w-[42rem] text-[0.98rem]">{description}</p>
       </div>
       {actions ? <div className="flex flex-wrap gap-3 pt-1">{actions}</div> : null}
     </section>

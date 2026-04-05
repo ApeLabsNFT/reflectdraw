@@ -1,35 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Camera,
-  ShieldCheck,
-  Sparkles,
-  Wind,
-} from "lucide-react";
+import { ArrowLeft, ShieldCheck, Sparkles, Wind } from "lucide-react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BrandMark } from "@/components/brand-mark";
 import { EmailAuthForm } from "@/components/email-auth-form";
 import { useAuthSession } from "@/lib/use-auth-session";
 
-const steps = [
-  {
-    title: "Authenticate",
-    body: "Use email or Google inside ReflectDraw's Supabase flow.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Onboard",
-    body: "Set tone, boundaries, and sanctuary preferences next.",
-    icon: Sparkles,
-  },
-  {
-    title: "Continue",
-    body: "Move directly into archive, ritual capture, and longer-term reflection.",
-    icon: Camera,
-  },
+const promises = [
+  "Supabase-owned identity and session flow",
+  "Google and email entry inside the app",
+  "Automatic handoff into onboarding after auth",
 ];
 
 export function AuthJourney({
@@ -50,56 +32,44 @@ export function AuthJourney({
 
   return (
     <main className="landing-shell overflow-hidden px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[1460px] flex-col">
+      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[1480px] flex-col">
         <header className="route-section flex items-center justify-between gap-3">
-          <div className="glass-soft-dark inline-flex items-center rounded-full px-4 py-3">
-            <BrandMark href="/" />
-          </div>
+          <BrandMark href="/" tone="light" />
 
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="glass-soft-dark inline-flex h-12 items-center gap-2 rounded-full px-4 text-xs font-semibold tracking-[0.14em] text-white uppercase"
-            >
-              <ArrowLeft className="size-4" />
-              Back
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="glass-soft-dark inline-flex h-12 items-center gap-2 rounded-full px-4 text-xs font-semibold tracking-[0.14em] text-white uppercase"
+          >
+            <ArrowLeft className="size-4" />
+            Back
+          </Link>
         </header>
 
-        <section className="mt-4 grid flex-1 gap-5 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="route-section glass-dark flex flex-col justify-between rounded-[2.5rem] p-5 sm:p-6 lg:p-8">
+        <section className="mt-4 grid flex-1 gap-5 lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="route-section glass-dark flex flex-col justify-between rounded-[2.6rem] p-5 sm:p-6 lg:p-8">
             <div className="space-y-6">
               <div className="glass-soft-dark inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-[0.68rem] font-semibold tracking-[0.16em] text-white uppercase">
                 <Wind className="size-3.5" />
-                The entry ritual
+                The handoff
               </div>
 
               <div className="space-y-4">
-                <h1 className="display-heading max-w-[12ch] text-balance text-[clamp(3rem,6vw,5.6rem)] leading-[0.9] text-white">
+                <h1 className="display-heading max-w-[9ch] text-balance text-[clamp(3.2rem,6vw,6rem)] leading-[0.9] text-white">
                   Step in once.
                   <br />
-                  The rest should
-                  <br />
-                  continue.
+                  Keep moving.
                 </h1>
                 <p className="max-w-[34rem] text-base leading-8 text-[rgba(245,245,238,0.82)]">
-                  This page is no longer a dead-end signup form. It is the handoff
-                  point between landing and onboarding, built for phone and web,
-                  and fully scoped to the ReflectDraw journey.
+                  This page now behaves like a real bridge between landing and
+                  onboarding. New users start their sanctuary setup immediately
+                  after auth, and returning users continue straight into the app.
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                {steps.map((step) => (
-                  <div key={step.title} className="glass-soft-dark rounded-[1.8rem] p-4">
-                    <div className="secondary-cta size-11">
-                      <step.icon className="size-5" />
-                    </div>
-                    <p className="mt-4 font-semibold text-white">{step.title}</p>
-                    <p className="mt-2 text-sm leading-7 text-[rgba(245,245,238,0.78)]">
-                      {step.body}
-                    </p>
+              <div className="grid gap-3">
+                {promises.map((promise) => (
+                  <div key={promise} className="glass-soft-dark rounded-[1.6rem] p-4">
+                    <p className="text-sm leading-7 text-white/84">{promise}</p>
                   </div>
                 ))}
               </div>
@@ -107,22 +77,28 @@ export function AuthJourney({
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <div className="glass-soft-dark rounded-[1.8rem] p-4">
-                <p className="eyebrow text-[rgba(245,245,238,0.62)]">Responsive flow</p>
-                <p className="mt-3 text-sm leading-7 text-white/82">
-                  Desktop gets a calmer split layout. Mobile stays stacked and thumb-friendly.
+                <div className="inline-flex size-10 items-center justify-center rounded-full bg-white/10">
+                  <ShieldCheck className="size-4 text-white" />
+                </div>
+                <p className="mt-4 font-semibold text-white">Inside the app</p>
+                <p className="mt-2 text-sm leading-7 text-white/78">
+                  No Vercel handoff, no broken detour, no dead-end form state.
                 </p>
               </div>
               <div className="glass-soft-dark rounded-[1.8rem] p-4">
-                <p className="eyebrow text-[rgba(245,245,238,0.62)]">Auth owner</p>
-                <p className="mt-3 text-sm leading-7 text-white/82">
-                  Supabase owns identity and session state. Vercel is only the host.
+                <div className="inline-flex size-10 items-center justify-center rounded-full bg-white/10">
+                  <Sparkles className="size-4 text-white" />
+                </div>
+                <p className="mt-4 font-semibold text-white">Responsive by default</p>
+                <p className="mt-2 text-sm leading-7 text-white/78">
+                  Clean split layout on desktop, stacked thumb-friendly flow on mobile.
                 </p>
               </div>
             </div>
           </div>
 
           <div className="route-section flex flex-col gap-4">
-            <div className="glass-soft-dark grid grid-cols-2 gap-3 rounded-[2rem] p-2">
+            <div className="glass-soft-dark grid grid-cols-2 gap-2 rounded-[1.75rem] p-2">
               <Link
                 href="/auth?mode=sign-up"
                 data-active={mode === "sign-up"}
