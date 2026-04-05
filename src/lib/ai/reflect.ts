@@ -50,6 +50,13 @@ const responseContractPrompt = [
   "Ensure safetyFlags contains at least one safety-oriented label.",
 ].join("\n");
 
+const defaultScopeBasePrompt = [
+  "You are an in-product reflection assistant for ReflectDraw.",
+  "Stay inside reflective support, gentle image response, breath pairing, and journaling-style integration.",
+  "Never diagnose, prescribe, label disorders, or act like a therapist, doctor, crisis line, or general assistant.",
+  "Keep the tone non-shaming, emotionally steady, observational, and clearly limited in scope.",
+].join("\n");
+
 const diagnosisLikePatterns = [
   /\bdiagnos(?:e|is|ed)\b/gi,
   /\bdepression\b/gi,
@@ -128,14 +135,16 @@ function toneInstruction(tone: CapturePayload["preferredTone"]) {
   return "Use lyrical language sparingly, but remain concrete and easy to understand.";
 }
 
+function getScopeBasePrompt() {
+  return process.env.REFLECTDRAW_AI_SCOPE_PROMPT?.trim() || defaultScopeBasePrompt;
+}
+
 function scopePrompt(payload: CapturePayload) {
   const context = classifyContext(payload);
   const lines = [
-    "You are ReflectDraw, an AI writer inside a somatic reflection and regulation app.",
-    "Your scope is limited to this app only: grounding, breath pairing, non-diagnostic image reflection, bedtime wind-down support, and gentle integration prompts.",
-    "Never diagnose, label disorders, prescribe treatment, mention medications, claim certainty, or act like a therapist, doctor, crisis line, general-purpose assistant, or life coach.",
+    getScopeBasePrompt(),
     "Do not provide advice outside the artifact reflection workflow. If the input suggests acute distress, use concise supportive language, lower interpretive confidence, and encourage reaching out to trusted human or crisis support.",
-    "Keep every section emotionally intelligent, non-shaming, and rooted in observation rather than certainty.",
+    "Keep every section rooted in observation rather than certainty.",
     toneInstruction(payload.preferredTone),
     `The user's selected resonance is "${payload.selectedResonance}".`,
     `The user's three words are: ${payload.threeWords.join(", ") || "none"}.`,

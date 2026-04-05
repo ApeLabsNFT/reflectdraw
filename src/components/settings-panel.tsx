@@ -13,6 +13,7 @@ import {
   Wind,
 } from "lucide-react";
 import { seedProfile } from "@/lib/demo-data";
+import { isInternalDiagnosticsEnabled } from "@/lib/internal-diagnostics";
 import { useBooleanPreference } from "@/lib/preferences";
 import { useAuthSession } from "@/lib/use-auth-session";
 import { initialsFromName } from "@/lib/utils";
@@ -60,6 +61,7 @@ export function SettingsPanel() {
     displayName,
     sanctuaryLabel,
   } = useAuthSession();
+  const showInternalDiagnostics = isInternalDiagnosticsEnabled();
 
   return (
     <div className="route-section space-y-6 pt-1 pb-6">
@@ -187,23 +189,25 @@ export function SettingsPanel() {
           <ChevronRight className="size-4 text-[rgba(117,123,116,0.72)]" />
         </Link>
 
-        <Link
-          href="/integrations"
-          className="surface-panel flex w-full items-center justify-between rounded-[1.8rem] px-4 py-4 text-left"
-        >
-          <div className="flex items-center gap-3">
-            <span className="secondary-cta size-10">
-              <Layers3 className="size-4" />
-            </span>
-            <div>
-              <p className="font-medium text-[var(--charcoal)]">Feature and integration audit</p>
-              <p className="mt-1 text-sm text-[rgba(117,123,116,0.88)]">
-                See what is working locally and what still needs credentials.
-              </p>
+        {showInternalDiagnostics ? (
+          <Link
+            href="/integrations"
+            className="surface-panel flex w-full items-center justify-between rounded-[1.8rem] px-4 py-4 text-left"
+          >
+            <div className="flex items-center gap-3">
+              <span className="secondary-cta size-10">
+                <Layers3 className="size-4" />
+              </span>
+              <div>
+                <p className="font-medium text-[var(--charcoal)]">Feature and integration audit</p>
+                <p className="mt-1 text-sm text-[rgba(117,123,116,0.88)]">
+                  See what is working locally and what still needs credentials.
+                </p>
+              </div>
             </div>
-          </div>
-          <ChevronRight className="size-4 text-[rgba(117,123,116,0.72)]" />
-        </Link>
+            <ChevronRight className="size-4 text-[rgba(117,123,116,0.72)]" />
+          </Link>
+        ) : null}
 
         {isSignedIn ? (
           <button
