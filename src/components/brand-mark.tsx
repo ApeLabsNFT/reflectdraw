@@ -4,12 +4,14 @@ import { cn } from "@/lib/utils";
 
 export function BrandMark({
   compact = false,
+  href = "/",
 }: {
   compact?: boolean;
+  href?: string;
 }) {
   return (
     <Link
-      href="/archive"
+      href={href}
       className="inline-flex items-center gap-2.5 text-[var(--sage)]"
     >
       <span

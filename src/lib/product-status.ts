@@ -55,9 +55,9 @@ export function getFeatureStatuses(): FeatureStatus[] {
     {
       id: "onboarding",
       name: "Onboarding",
-      route: "/",
+      route: "/onboarding",
       status: "working",
-      summary: "Editorial landing screen is live and navigates into the app.",
+      summary: "New users now flow from auth into onboarding before the archive opens.",
     },
     {
       id: "archive",
@@ -132,9 +132,9 @@ export function getFeatureStatuses(): FeatureStatus[] {
     {
       id: "auth",
       name: "Login and Sign Up",
-      route: "/sign-up",
+      route: "/auth",
       status: "working",
-      summary: "Email auth screens are live and connect to Supabase once auth keys are present.",
+      summary: "Unified auth journey now supports email and Google with post-auth routing.",
     },
     {
       id: "legal",

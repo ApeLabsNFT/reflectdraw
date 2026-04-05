@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, MoonStar, ShieldCheck } from "lucide-react";
+import { MoonStar, ShieldCheck } from "lucide-react";
 import clsx from "clsx";
 import { BottomNav } from "@/components/bottom-nav";
 import { BrandMark } from "@/components/brand-mark";
+import { ExperienceGate } from "@/components/experience-gate";
 import { useAuthSession } from "@/lib/use-auth-session";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -19,18 +20,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {!immersive ? (
           <header className="sticky top-0 z-10 px-4 pt-4">
             <div className="route-section surface-panel flex items-center justify-between rounded-[1.7rem] px-3 py-2.5 backdrop-blur-xl">
-              <button
-                type="button"
-                className="secondary-cta size-10 shrink-0"
-                aria-label="Open menu"
-              >
-                <Menu className="size-4" />
-              </button>
+              <div className="secondary-cta h-10 px-4 text-[0.62rem] font-bold uppercase tracking-[0.14em]">
+                {isSignedIn ? "Member" : "Preview"}
+              </div>
 
-              <BrandMark compact />
+              <BrandMark compact href={isSignedIn ? "/welcome" : "/"} />
 
               <Link
-                href={isSignedIn ? "/settings" : "/sign-in"}
+                href={isSignedIn ? "/settings" : "/auth"}
                 className="secondary-cta size-10 shrink-0"
                 aria-label={isSignedIn ? "Privacy settings" : "Log in"}
                 title={isSignedIn ? user?.email ?? "Settings" : "Log in"}
@@ -39,7 +36,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <ShieldCheck className="size-4" />
                 ) : (
                   <span className="text-[0.62rem] font-bold uppercase tracking-[0.12em]">
-                    Log
+                    Join
                   </span>
                 )}
               </Link>
@@ -53,7 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             immersive ? "" : "px-4 pb-28 pt-4",
           )}
         >
-          {children}
+          <ExperienceGate>{children}</ExperienceGate>
         </main>
 
         {!immersive ? <BottomNav /> : null}

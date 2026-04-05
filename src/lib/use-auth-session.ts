@@ -2,6 +2,13 @@
 
 import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
+import {
+  getDisplayName,
+  getPreferredTone,
+  getSanctuaryLabel,
+  hasAcceptedReflectiveScope,
+  hasCompletedOnboarding,
+} from "@/lib/journey";
 import { createClient } from "@/lib/supabase/client";
 
 export function useAuthSession() {
@@ -47,5 +54,10 @@ export function useAuthSession() {
     isLoading,
     isConfigured: Boolean(client),
     isSignedIn: Boolean(user),
+    isOnboarded: hasCompletedOnboarding(user),
+    hasAcceptedScope: hasAcceptedReflectiveScope(user),
+    displayName: getDisplayName(user),
+    sanctuaryLabel: getSanctuaryLabel(user),
+    preferredTone: getPreferredTone(user),
   };
 }

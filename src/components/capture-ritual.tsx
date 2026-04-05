@@ -18,6 +18,7 @@ import { breathPractices } from "@/lib/demo-data";
 import { trackClientEvent } from "@/lib/analytics";
 import { useBooleanPreference } from "@/lib/preferences";
 import { writeLatestRun } from "@/lib/storage";
+import { useAuthSession } from "@/lib/use-auth-session";
 
 const resonanceOptions = [
   "Grounded",
@@ -47,6 +48,7 @@ const wordOptions = [
 
 export function CaptureRitual() {
   const router = useRouter();
+  const { isSignedIn, displayName, preferredTone } = useAuthSession();
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [selectedResonance, setSelectedResonance] = useState("Expansive");
@@ -81,6 +83,12 @@ export function CaptureRitual() {
         typeof navigator !== "undefined" && typeof navigator.vibrate === "function",
     });
   }, []);
+
+  useEffect(() => {
+    if (isSignedIn) {
+      setSelectedTone(preferredTone);
+    }
+  }, [isSignedIn, preferredTone]);
 
   async function fileToDataUrl(file: File) {
     return await new Promise<string>((resolve, reject) => {
@@ -206,11 +214,14 @@ export function CaptureRitual() {
       <section className="space-y-4">
         <p className="eyebrow">The Daily Ritual</p>
         <h1 className="serif-heading max-w-[16rem] text-balance text-[3.3rem] leading-[0.91]">
-          In this moment, how are you feeling?
+          {isSignedIn
+            ? `${displayName}, what is present right now?`
+            : "In this moment, how are you feeling?"}
         </h1>
         <p className="muted-copy max-w-sm text-sm">
-          Let the thought arrive first. Add a drawing or photo if you want the
-          reflection anchored to something visible.
+          {isSignedIn
+            ? "Your onboarding tone now preloads here, so the ritual already knows how you want the reflection to sound."
+            : "Let the thought arrive first. Add a drawing or photo if you want the reflection anchored to something visible."}
         </p>
       </section>
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Plus, Search, Wind } from "lucide-react";
 import { ArtworkTile } from "@/components/artwork-tile";
 import { promptLibrary, seedArtifacts } from "@/lib/demo-data";
+import { useAuthSession } from "@/lib/use-auth-session";
 import { useLatestRun } from "@/lib/use-latest-run";
 import { formatDayMonth } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ export function ArchiveFeed() {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const latestRun = useLatestRun();
+  const { isSignedIn, displayName, sanctuaryLabel } = useAuthSession();
 
   const artifacts = useMemo(() => {
     if (!latestRun) return seedArtifacts;
@@ -46,18 +48,39 @@ export function ArchiveFeed() {
       <section className="space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-3">
-            <p className="serif-heading max-w-[14rem] text-balance text-[3.2rem] leading-[0.92]">
-              Your Inner Echo Archive.
+            <p className="serif-heading max-w-[16rem] text-balance text-[3.2rem] leading-[0.92]">
+              {isSignedIn ? sanctuaryLabel : "Preview the sanctuary archive."}
             </p>
             <p className="muted-copy max-w-sm text-sm">
-              A quieter home for drawings, breath-linked rituals, and the
-              patterns that reveal themselves over time.
+              {isSignedIn
+                ? `Welcome back, ${displayName}. This is where drawings, breath-linked rituals, and longer arcs gather over time.`
+                : "Guest preview mode is open, but new members now move through auth and onboarding before the full archive experience begins."}
             </p>
           </div>
           <Link href="/capture" className="primary-cta mt-1 size-12 shrink-0">
             <Plus className="size-5" />
           </Link>
         </div>
+
+        {!isSignedIn ? (
+          <div className="surface-panel rounded-[2rem] p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="eyebrow">Guest preview</p>
+                <p className="mt-2 text-sm leading-7 text-[rgba(117,123,116,0.9)]">
+                  Browse the ritual archive, then use the new auth journey when you&apos;re
+                  ready to save reflections and begin onboarding properly.
+                </p>
+              </div>
+              <Link
+                href="/auth"
+                className="primary-cta h-11 shrink-0 px-4 text-xs font-semibold tracking-[0.14em] uppercase"
+              >
+                Join now
+              </Link>
+            </div>
+          </div>
+        ) : null}
 
         <label className="soft-input flex items-center gap-3 px-4 py-3">
           <Search className="size-4 text-[rgba(117,123,116,0.9)]" />
@@ -140,11 +163,11 @@ export function ArchiveFeed() {
 
       <section className="grid grid-cols-2 gap-3">
         {secondary.map((artifact) => (
-            <Link
-              key={artifact.id}
-              href={`/artifact/${artifact.id}`}
-              className="surface-panel-soft rounded-[2rem] p-3"
-            >
+          <Link
+            key={artifact.id}
+            href={`/artifact/${artifact.id}`}
+            className="surface-panel-soft rounded-[2rem] p-3"
+          >
             <ArtworkTile artifact={artifact} className="aspect-square" />
             <div className="space-y-1 px-1 pt-3">
               <p className="eyebrow">Captured {formatDayMonth(artifact.capturedAt)}</p>

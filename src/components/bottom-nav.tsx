@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flower2, GalleryVerticalEnd, Layers3, Wind } from "lucide-react";
+import { Flower2, GalleryVerticalEnd, HeartHandshake, Wind } from "lucide-react";
 import clsx from "clsx";
 
 const items = [
   { href: "/archive", label: "Archive", icon: GalleryVerticalEnd },
   { href: "/capture", label: "Ritual", icon: Flower2 },
   { href: "/sanctuary", label: "Breathe", icon: Wind },
-  { href: "/integrations", label: "Status", icon: Layers3 },
+  { href: "/guides", label: "Guides", icon: HeartHandshake },
 ];
 
 export function BottomNav() {

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { ArrowRight, Camera, ShieldCheck, Wind } from "lucide-react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { BrandMark } from "@/components/brand-mark";
 import { useAuthSession } from "@/lib/use-auth-session";
 
@@ -24,7 +26,14 @@ const journeySteps = [
 ];
 
 export function LandingJourney() {
-  const { isConfigured, isSignedIn, user } = useAuthSession();
+  const router = useRouter();
+  const { isConfigured, isSignedIn, isLoading, user } = useAuthSession();
+
+  useEffect(() => {
+    if (!isLoading && isSignedIn) {
+      router.replace("/welcome");
+    }
+  }, [isLoading, isSignedIn, router]);
 
   return (
     <main className="app-canvas min-h-screen px-6 py-8">
@@ -46,8 +55,8 @@ export function LandingJourney() {
               <p className="text-sm leading-7 text-[rgba(117,123,116,0.94)]">
                 {isConfigured
                   ? isSignedIn
-                    ? `Signed in as ${user?.email ?? "your account"}.`
-                    : "Sign up to save your archive and carry your rituals across devices."
+                    ? `Signed in as ${user?.email ?? "your account"}. Reopening your journey.`
+                    : "Auth leads directly into onboarding now, so the first session actually closes the loop."
                   : "Auth is ready to connect as soon as your Supabase public and server keys are added."}
               </p>
             </div>
@@ -76,39 +85,28 @@ export function LandingJourney() {
         </div>
 
         <section className="route-section mt-8 space-y-4 pb-4">
-          {isSignedIn ? (
+          <Link
+            href={isSignedIn ? "/welcome" : "/auth"}
+            className="primary-cta h-16 w-full px-6 text-lg font-semibold"
+          >
+            {isSignedIn ? "Continue your journey" : "Begin the journey"}
+            <ArrowRight className="size-5" />
+          </Link>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              href="/auth?mode=sign-in"
+              className="secondary-cta h-14 w-full px-4 text-sm font-semibold"
+            >
+              Log in
+            </Link>
             <Link
               href="/archive"
-              className="primary-cta h-16 w-full px-6 text-lg font-semibold"
+              className="secondary-cta h-14 w-full px-4 text-sm font-semibold"
             >
-              Open your archive
-              <ArrowRight className="size-5" />
+              Preview archive
             </Link>
-          ) : (
-            <>
-              <Link
-                href="/sign-up"
-                className="primary-cta h-16 w-full px-6 text-lg font-semibold"
-              >
-                Create your sanctuary
-                <ArrowRight className="size-5" />
-              </Link>
-              <div className="grid grid-cols-2 gap-3">
-                <Link
-                  href="/sign-in"
-                  className="secondary-cta h-14 w-full px-4 text-sm font-semibold"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/archive"
-                  className="secondary-cta h-14 w-full px-4 text-sm font-semibold"
-                >
-                  Continue demo
-                </Link>
-              </div>
-            </>
-          )}
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-semibold tracking-[0.16em] text-[rgba(117,123,116,0.84)] uppercase">
             <Link href="/terms">Terms</Link>

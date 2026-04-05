@@ -1,11 +1,5 @@
-import { EmailAuthForm } from "@/components/email-auth-form";
+import { redirect } from "next/navigation";
 
-export default function SignUpPage() {
-  return (
-    <main className="app-canvas min-h-screen px-6 py-8">
-      <div className="mx-auto max-w-[430px] space-y-6">
-        <EmailAuthForm mode="sign-up" />
-      </div>
-    </main>
-  );
+export default function LegacySignUpPage() {
+  redirect("/auth?mode=sign-up");
 }
