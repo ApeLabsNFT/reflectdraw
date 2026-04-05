@@ -88,6 +88,7 @@ export function EmailAuthForm({
           email,
           password,
           options: {
+            emailRedirectTo: getAuthCallbackUrl("/welcome"),
             data: {
               full_name: fullName,
               display_name: fullName,
@@ -373,8 +374,9 @@ export function EmailAuthForm({
               <ShieldCheck className="size-4" />
             </span>
             <p className="text-sm leading-7 text-[rgba(117,123,116,0.9)]">
-              After auth, ReflectDraw routes new users into onboarding immediately.
-              Returning users go back to their archive without extra steps.
+              Auth is stored and resumed through Supabase. After auth,
+              ReflectDraw routes new users into onboarding immediately and
+              returning users back to their archive.
             </p>
           </div>
         </>

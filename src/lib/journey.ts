@@ -54,11 +54,15 @@ export function hasAcceptedReflectiveScope(user: User | null | undefined) {
 }
 
 export function getAuthCallbackUrl(next = "/welcome") {
-  if (typeof window === "undefined") {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (typeof window !== "undefined" ? window.location.origin : undefined);
+
+  if (!baseUrl) {
     return undefined;
   }
 
-  const callback = new URL("/auth/callback", window.location.origin);
+  const callback = new URL("/auth/callback", baseUrl);
   callback.searchParams.set("next", next);
   return callback.toString();
 }
