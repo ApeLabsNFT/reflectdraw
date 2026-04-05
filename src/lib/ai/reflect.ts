@@ -24,65 +24,31 @@ const modelOutputSchema = z.object({
   safetyFlags: z.array(z.string()).min(1),
 });
 
-const modelResponseJsonSchema = {
-  type: "object",
-  properties: {
-    coreReflection: { type: "string" },
-    overallStructure: { type: "string" },
-    energyLine: { type: "string" },
-    directionalProcess: { type: "string" },
-    symbolicZones: { type: "string" },
-    emotionalNarrative: { type: "string" },
-    comparativeContext: { type: "string" },
-    integrationPrompt: { type: "string" },
-    goldenInsight: { type: "string" },
-    breathMode: {
-      type: "string",
-      enum: ["arrival", "box", "extended-exhale", "wind-down", "physiological-sigh"],
-    },
-    resonanceLabel: { type: "string" },
-    confidenceLabel: { type: "string" },
-    keyThemes: {
-      type: "array",
-      items: { type: "string" },
-      minItems: 3,
-      maxItems: 5,
-    },
-    imageVariant: {
-      type: "string",
-      enum: ["glow", "mist", "forest", "water", "lotus"],
-    },
-    thumbnailKind: {
-      type: "string",
-      enum: ["threshold", "ripples", "canopy", "dawn", "bloom", "echo"],
-    },
-    thumbnailAlt: { type: "string" },
-    safetyFlags: {
-      type: "array",
-      items: { type: "string" },
-      minItems: 1,
-    },
-  },
-  required: [
-    "coreReflection",
-    "overallStructure",
-    "energyLine",
-    "directionalProcess",
-    "symbolicZones",
-    "emotionalNarrative",
-    "comparativeContext",
-    "integrationPrompt",
-    "goldenInsight",
-    "breathMode",
-    "resonanceLabel",
-    "confidenceLabel",
-    "keyThemes",
-    "imageVariant",
-    "thumbnailKind",
-    "thumbnailAlt",
-    "safetyFlags",
-  ],
-};
+const responseContractPrompt = [
+  "Return raw JSON only. Do not include markdown, commentary, or code fences.",
+  "Use this exact object shape with every field present:",
+  "{",
+  '  "coreReflection": "string",',
+  '  "overallStructure": "string",',
+  '  "energyLine": "string",',
+  '  "directionalProcess": "string",',
+  '  "symbolicZones": "string",',
+  '  "emotionalNarrative": "string",',
+  '  "comparativeContext": "string",',
+  '  "integrationPrompt": "string",',
+  '  "goldenInsight": "string",',
+  '  "breathMode": "arrival | box | extended-exhale | wind-down | physiological-sigh",',
+  '  "resonanceLabel": "string",',
+  '  "confidenceLabel": "string",',
+  '  "keyThemes": ["string", "string", "string"],',
+  '  "imageVariant": "glow | mist | forest | water | lotus",',
+  '  "thumbnailKind": "threshold | ripples | canopy | dawn | bloom | echo",',
+  '  "thumbnailAlt": "string",',
+  '  "safetyFlags": ["non-diagnostic", "scope-limited", "supportive-language-verified"]',
+  "}",
+  "Keep keyThemes to 3 to 5 short phrases.",
+  "Ensure safetyFlags contains at least one safety-oriented label.",
+].join("\n");
 
 const diagnosisLikePatterns = [
   /\bdiagnos(?:e|is|ed)\b/gi,
@@ -186,6 +152,10 @@ function scopePrompt(payload: CapturePayload) {
   return lines.join("\n");
 }
 
+function buildGemmaPrompt(payload: CapturePayload) {
+  return [scopePrompt(payload), responseContractPrompt].join("\n\n");
+}
+
 function sanitizeText(text: string) {
   let next = text;
 
@@ -198,6 +168,19 @@ function sanitizeText(text: string) {
   }
 
   return next.replace(/\s+/g, " ").trim();
+}
+
+function extractJsonText(text: string) {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  const candidate = (fenced?.[1] ?? text).trim();
+  const start = candidate.indexOf("{");
+  const end = candidate.lastIndexOf("}");
+
+  if (start === -1 || end === -1 || end <= start) {
+    throw new Error("Gemma response did not contain valid JSON text");
+  }
+
+  return candidate.slice(start, end + 1);
 }
 
 function applySafety(output: z.infer<typeof modelOutputSchema>) {
@@ -350,7 +333,7 @@ async function callGemma(
   }
 
   const model = getGemmaModel();
-  const prompt = scopePrompt(payload);
+  const prompt = buildGemmaPrompt(payload);
   const image = parseInlineImage(payload.previewUrl);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 25000);
@@ -366,17 +349,11 @@ async function callGemma(
         },
         signal: controller.signal,
         body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: prompt }],
-          },
           contents: [
             {
               role: "user",
               parts: [
-                {
-                  text:
-                    "Generate ReflectDraw JSON only. Use the selected tone, resonance, note, and optional image as inputs.",
-                },
+                { text: prompt },
                 ...(image
                   ? [
                       {
@@ -393,8 +370,6 @@ async function callGemma(
           generationConfig: {
             temperature: 0.6,
             topP: 0.9,
-            responseMimeType: "application/json",
-            responseJsonSchema: modelResponseJsonSchema,
           },
         }),
       },
@@ -414,11 +389,11 @@ async function callGemma(
       throw new Error("Gemma response was empty");
     }
 
-    const parsed = modelOutputSchema.parse(JSON.parse(text));
+    const parsed = modelOutputSchema.parse(JSON.parse(extractJsonText(text)));
 
     return {
       output: applySafety(parsed),
-      modelVersion: model,
+      modelVersion: json.modelVersion ?? model,
     };
   } finally {
     clearTimeout(timeout);
