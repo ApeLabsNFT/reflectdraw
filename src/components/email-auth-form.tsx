@@ -9,6 +9,41 @@ import { useAuthSession } from "@/lib/use-auth-session";
 
 type AuthMode = "sign-in" | "sign-up";
 
+function getAuthMessage(cause: unknown) {
+  const message =
+    cause instanceof Error ? cause.message : "We couldn't complete that auth step.";
+  const code =
+    typeof cause === "object" && cause && "code" in cause
+      ? String((cause as { code?: unknown }).code ?? "")
+      : "";
+
+  if (code === "over_email_send_rate_limit" || /email rate limit exceeded/i.test(message)) {
+    return {
+      kind: "message" as const,
+      text: "We already sent a confirmation email recently. Check your inbox, spam, or promotions folder, then wait a few minutes before asking for another one.",
+    };
+  }
+
+  if (/email not confirmed/i.test(message)) {
+    return {
+      kind: "message" as const,
+      text: "This account still needs confirmation. Open the latest email we sent you, or request another one below.",
+    };
+  }
+
+  if (code === "email_address_invalid" || /invalid/i.test(message)) {
+    return {
+      kind: "error" as const,
+      text: "That email address does not look valid yet. Please check it and try again.",
+    };
+  }
+
+  return {
+    kind: "error" as const,
+    text: message,
+  };
+}
+
 export function EmailAuthForm({
   mode,
   serverError,
@@ -32,6 +67,45 @@ export function EmailAuthForm({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [pendingConfirmationEmail, setPendingConfirmationEmail] = useState<string | null>(null);
+
+  async function resendConfirmation(emailToSend: string) {
+    if (!client) {
+      setError("We couldn't resend the confirmation email right now. Please try again shortly.");
+      return;
+    }
+
+    setError(null);
+    setMessage(null);
+    setIsResending(true);
+
+    try {
+      const { error: resendError } = await client.auth.resend({
+        type: "signup",
+        email: emailToSend,
+        options: {
+          emailRedirectTo: getAuthCallbackUrl("/welcome"),
+        },
+      });
+
+      if (resendError) {
+        throw resendError;
+      }
+
+      setMessage(
+        `We sent another confirmation email to ${emailToSend}. Check spam or promotions if it does not appear in the inbox.`,
+      );
+    } catch (resendCause) {
+      setError(
+        resendCause instanceof Error
+          ? resendCause.message
+          : "We couldn't resend the confirmation email.",
+      );
+    } finally {
+      setIsResending(false);
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,8 +153,15 @@ export function EmailAuthForm({
           return;
         }
 
+        setPendingConfirmationEmail(email);
+
+        const existingAccount =
+          Array.isArray(data.user?.identities) && data.user.identities.length === 0;
+
         setMessage(
-          "Check your email to verify the account. Once you're back, ReflectDraw will start onboarding instead of leaving you in signup limbo.",
+          existingAccount
+            ? `That email may already be waiting for confirmation. Use the resend action below, then open the newest email and continue into onboarding.`
+            : `Check your email to verify the account. Once you open the confirmation link, ReflectDraw will continue into onboarding.`,
         );
         return;
       }
@@ -97,11 +178,23 @@ export function EmailAuthForm({
       router.replace("/welcome");
       router.refresh();
     } catch (submitError) {
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "We couldn't complete that auth step.",
-      );
+      const feedback = getAuthMessage(submitError);
+
+      if (feedback.kind === "message" && /confirmation/i.test(feedback.text)) {
+        setPendingConfirmationEmail(email);
+        setMessage(`${feedback.text} Email: ${email}.`);
+        setError(null);
+        return;
+      }
+
+      if (feedback.kind === "message") {
+        setPendingConfirmationEmail(email);
+        setMessage(feedback.text);
+        setError(null);
+        return;
+      }
+
+      setError(feedback.text);
     } finally {
       setIsSubmitting(false);
     }
@@ -115,6 +208,9 @@ export function EmailAuthForm({
   }
 
   const feedback = error ?? serverError ?? null;
+  const canResendConfirmation =
+    Boolean(pendingConfirmationEmail) &&
+    !message?.includes("wait a few minutes");
 
   return (
     <section className="route-section surface-panel space-y-5 rounded-[2.4rem] p-6">
@@ -218,7 +314,10 @@ export function EmailAuthForm({
                   required
                   type="email"
                   value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    setPendingConfirmationEmail(null);
+                  }}
                   className="w-full bg-transparent text-sm text-[var(--charcoal)] outline-none"
                   placeholder="you@example.com"
                 />
@@ -241,8 +340,27 @@ export function EmailAuthForm({
             </label>
 
             {message ? (
-              <div className="surface-panel-soft rounded-[1.6rem] px-4 py-3 text-sm text-[var(--sage)]">
-                {message}
+              <div className="surface-panel-soft space-y-3 rounded-[1.6rem] px-4 py-3 text-sm text-[var(--sage)]">
+                <p>{message}</p>
+                {pendingConfirmationEmail ? (
+                  canResendConfirmation ? (
+                  <button
+                    type="button"
+                    onClick={() => void resendConfirmation(pendingConfirmationEmail)}
+                    disabled={isResending}
+                    className="secondary-cta h-11 px-4 text-xs font-semibold tracking-[0.14em] uppercase disabled:opacity-60"
+                  >
+                    {isResending ? (
+                      <>
+                        <LoaderCircle className="size-4 animate-spin" />
+                        Resending
+                      </>
+                    ) : (
+                      "Resend confirmation email"
+                    )}
+                  </button>
+                  ) : null
+                ) : null}
               </div>
             ) : null}
 
