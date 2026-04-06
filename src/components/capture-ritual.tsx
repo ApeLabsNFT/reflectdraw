@@ -220,8 +220,8 @@ export function CaptureRitual() {
         </h1>
         <p className="muted-copy max-w-sm text-sm">
           {isSignedIn
-            ? "Your onboarding tone now preloads here, so the ritual already knows how you want the reflection to sound."
-            : "Let the thought arrive first. Add a drawing or photo if you want the reflection anchored to something visible."}
+            ? "Use this when your thoughts are racing, your focus keeps slipping, or you need to move one feeling out of your body and onto the page."
+            : "Start with a drawing, a photo, or a few words when you feel overwhelmed, scattered, or simply too full to hold it all in your head."}
         </p>
       </section>
 
@@ -243,7 +243,7 @@ export function CaptureRitual() {
               <div className="space-y-2 rounded-[1.8rem] bg-[rgba(255,255,255,0.72)] p-4 backdrop-blur-xl">
                 <p className="eyebrow">Capture ritual</p>
                 <p className="font-serif text-[1.9rem] leading-[1.02] text-[var(--charcoal)]">
-                  Give your image room to breathe.
+                  Let the moment land before you try to explain it.
                 </p>
               </div>
             </div>
@@ -327,9 +327,9 @@ export function CaptureRitual() {
 
       <section className="surface-panel-soft rounded-[2rem] p-4">
         <div className="flex items-center justify-between gap-3">
-          <p className="eyebrow">Phone features</p>
+          <p className="eyebrow">Ways to begin</p>
           <span className="text-xs text-[rgba(117,123,116,0.78)]">
-            Progressive enhancement
+            Best on mobile, available everywhere
           </span>
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2">
@@ -360,7 +360,7 @@ export function CaptureRitual() {
 
       <section className="grid grid-cols-[1.2fr_0.8fr] gap-3">
         <div className="surface-panel-soft rounded-[2rem] p-4">
-          <p className="eyebrow">Somatic resonance</p>
+          <p className="eyebrow">How your body feels</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {resonanceOptions.map((option) => (
               <button
@@ -383,7 +383,7 @@ export function CaptureRitual() {
             Arrival Breath
           </p>
           <p className="mt-2 text-xs text-[rgba(117,123,116,0.88)]">
-            75 seconds of pacing before you continue.
+            A short pause for when your system needs help slowing down.
           </p>
         </div>
       </section>
@@ -407,9 +407,9 @@ export function CaptureRitual() {
 
       <section className="surface-panel rounded-[2rem] p-4">
         <div className="flex items-center justify-between gap-3">
-          <p className="eyebrow">Preferred tone</p>
+          <p className="eyebrow">How it should speak back</p>
           <span className="text-xs text-[rgba(117,123,116,0.8)]">
-            Shapes how the reflection speaks back
+            Choose the kind of language you can actually receive today
           </span>
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2">
@@ -445,7 +445,7 @@ export function CaptureRitual() {
         <p className="mt-3 font-serif text-[2rem] leading-[1.04] text-[var(--charcoal)]">
           {deferredText
             ? `"${deferredText.slice(0, 140)}${deferredText.length > 140 ? "..." : ""}"`
-            : "Your note will rest here in a softer summary before processing."}
+            : "Your note will settle here first, before it becomes a fuller reflection."}
         </p>
       </section>
 
@@ -459,8 +459,8 @@ export function CaptureRitual() {
               {breathPractices[0].title}
             </p>
             <p className="text-sm text-[rgba(117,123,116,0.9)]">
-              {breathPractices[0].description} The body can settle before the
-              mind needs to interpret.
+              {breathPractices[0].description} This is especially helpful when
+              the mind feels loud and the body needs a softer place to start.
             </p>
           </div>
         </div>

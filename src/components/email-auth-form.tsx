@@ -9,34 +9,6 @@ import { useAuthSession } from "@/lib/use-auth-session";
 
 type AuthMode = "sign-in" | "sign-up";
 
-function GoogleGlyph() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-    >
-      <path
-        d="M21.8 12.23c0-.72-.06-1.25-.19-1.8H12v3.38h5.65c-.11.84-.72 2.1-2.08 2.95l-.02.11 3.06 2.32.21.02c1.9-1.72 2.98-4.25 2.98-6.98Z"
-        fill="#4285F4"
-      />
-      <path
-        d="M12 22c2.76 0 5.08-.89 6.77-2.4l-3.22-2.45c-.86.59-2.01 1-3.55 1-2.7 0-4.98-1.72-5.79-4.1l-.1.01-3.18 2.41-.03.09A10.24 10.24 0 0 0 12 22Z"
-        fill="#34A853"
-      />
-      <path
-        d="M6.21 14.05A6.03 6.03 0 0 1 5.87 12c0-.71.12-1.39.33-2.05l-.01-.14-3.22-2.45-.11.05A9.82 9.82 0 0 0 1.8 12c0 1.63.39 3.17 1.07 4.54l3.34-2.49Z"
-        fill="#FBBC05"
-      />
-      <path
-        d="M12 5.85c1.93 0 3.23.82 3.98 1.5l2.9-2.77C17.07 2.95 14.76 2 12 2a10.24 10.24 0 0 0-9.13 5.46l3.34 2.49C7.02 7.57 9.3 5.85 12 5.85Z"
-        fill="#EA4335"
-      />
-    </svg>
-  );
-}
-
 export function EmailAuthForm({
   mode,
   serverError,
@@ -60,7 +32,6 @@ export function EmailAuthForm({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -68,9 +39,7 @@ export function EmailAuthForm({
     setMessage(null);
 
     if (!client) {
-      setError(
-        "Supabase public auth keys are still missing, so this form cannot connect yet.",
-      );
+      setError("Sign in is not available on this device yet. Please try again shortly.");
       return;
     }
 
@@ -138,47 +107,6 @@ export function EmailAuthForm({
     }
   }
 
-  async function handleGoogleAuth() {
-    setError(null);
-    setMessage(null);
-
-    if (!client) {
-      setError("Supabase auth is not configured in the browser yet.");
-      return;
-    }
-
-    if (mode === "sign-up" && !acceptedTerms) {
-      setError("Please accept the terms and privacy links before continuing with Google.");
-      return;
-    }
-
-    setIsGoogleSubmitting(true);
-
-    try {
-      const { error: googleError } = await client.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: getAuthCallbackUrl("/welcome"),
-          queryParams: {
-            access_type: "offline",
-            prompt: "select_account",
-          },
-        },
-      });
-
-      if (googleError) {
-        throw googleError;
-      }
-    } catch (oauthError) {
-      setError(
-        oauthError instanceof Error
-          ? oauthError.message
-          : "Google sign-in could not start on this device.",
-      );
-      setIsGoogleSubmitting(false);
-    }
-  }
-
   async function handleSignOut() {
     if (!client) return;
     await client.auth.signOut();
@@ -225,15 +153,15 @@ export function EmailAuthForm({
             </p>
             <h2 className="serif-heading text-[2.7rem] leading-[0.95] text-[var(--charcoal)]">
               {mode === "sign-up"
-                ? "Start with auth, then move straight into onboarding."
-                : "Resume the ritual without rethinking the route."}
+                ? "Make space for the version of you that needs gentleness today."
+                : "Come back without having to start from zero."}
             </h2>
           </div>
 
           {!isConfigured ? (
             <div className="surface-panel-soft rounded-[1.8rem] p-4 text-sm leading-7 text-[rgba(117,123,116,0.92)]">
-              Supabase auth is not fully configured yet. You can still preview the
-              archive, but live email and Google auth need the browser-safe key.
+              Sign-in is still being prepared here. You can continue exploring the
+              product, then come back once account access is available.
             </div>
           ) : null}
 
@@ -263,33 +191,6 @@ export function EmailAuthForm({
               </label>
             </div>
           ) : null}
-
-          <button
-            type="button"
-            onClick={() => void handleGoogleAuth()}
-            disabled={isGoogleSubmitting || !isConfigured}
-            className="secondary-cta h-14 w-full px-6 text-sm font-semibold disabled:opacity-60"
-          >
-            {isGoogleSubmitting ? (
-              <>
-                <LoaderCircle className="size-4 animate-spin" />
-                Redirecting to Google
-              </>
-            ) : (
-              <>
-                <GoogleGlyph />
-                Continue with Google
-              </>
-            )}
-          </button>
-
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-[rgba(117,123,116,0.18)]" />
-            <span className="text-[0.68rem] font-semibold tracking-[0.16em] text-[rgba(117,123,116,0.76)] uppercase">
-              or with email
-            </span>
-            <div className="h-px flex-1 bg-[rgba(117,123,116,0.18)]" />
-          </div>
 
           <form className="space-y-4" onSubmit={(event) => void handleSubmit(event)}>
             {mode === "sign-up" ? (
@@ -374,9 +275,8 @@ export function EmailAuthForm({
               <ShieldCheck className="size-4" />
             </span>
             <p className="text-sm leading-7 text-[rgba(117,123,116,0.9)]">
-              Auth is stored and resumed through Supabase. After auth,
-              ReflectDraw routes new users into onboarding immediately and
-              returning users back to their archive.
+              After you enter, ReflectDraw routes new users into onboarding and
+              returning users back to their archive, breath rituals, and saved reflections.
             </p>
           </div>
         </>

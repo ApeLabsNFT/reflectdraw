@@ -9,9 +9,9 @@ import { EmailAuthForm } from "@/components/email-auth-form";
 import { useAuthSession } from "@/lib/use-auth-session";
 
 const promises = [
-  "Supabase-owned identity and session flow",
-  "Google and email entry inside the app",
-  "Automatic handoff into onboarding after auth",
+  "A quieter place to return when everything feels loud",
+  "Email entry that moves straight into your sanctuary setup",
+  "Built for overwhelm, scattered attention, and bedtime overthinking",
 ];
 
 export function AuthJourney({
@@ -60,9 +60,9 @@ export function AuthJourney({
                   Keep moving.
                 </h1>
                 <p className="max-w-[34rem] text-base leading-8 text-[rgba(245,245,238,0.82)]">
-                  This page now behaves like a real bridge between landing and
-                  onboarding. New users start their sanctuary setup immediately
-                  after auth, and returning users continue straight into the app.
+                  This is the point where you step out of the noise and into your
+                  own space. New users move directly into onboarding, and returning
+                  users continue straight back to the rhythms they already know.
                 </p>
               </div>
 
@@ -82,7 +82,7 @@ export function AuthJourney({
                 </div>
                 <p className="mt-4 font-semibold text-white">Inside the app</p>
                 <p className="mt-2 text-sm leading-7 text-white/78">
-                  No Vercel handoff, no broken detour, no dead-end form state.
+                  No extra detour. No jarring restart. Just a clean handoff into your next step.
                 </p>
               </div>
               <div className="glass-soft-dark rounded-[1.8rem] p-4">
@@ -91,7 +91,7 @@ export function AuthJourney({
                 </div>
                 <p className="mt-4 font-semibold text-white">Responsive by default</p>
                 <p className="mt-2 text-sm leading-7 text-white/78">
-                  Clean split layout on desktop, stacked thumb-friendly flow on mobile.
+                  Spacious on desktop, simple on mobile, and calmer on both.
                 </p>
               </div>
             </div>

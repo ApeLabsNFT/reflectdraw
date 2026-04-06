@@ -77,15 +77,15 @@ export function SettingsPanel() {
             {isSignedIn ? sanctuaryLabel : seedProfile.sanctuaryLabel}
           </h1>
           <p className="muted-copy text-sm">
-            Nervous system care, soft privacy boundaries, and rituals that stay
-            in your control.
+            A quieter place for your rituals, your reflection history, and the
+            preferences that help the app meet you more gently.
           </p>
           <p className="text-sm text-[rgba(117,123,116,0.88)]">
             {isSignedIn
               ? isOnboarded
                 ? `Signed in as ${user?.email ?? "your account"}`
                 : "Signed in, but onboarding still needs to be completed."
-              : "Guest mode is active until auth is connected."}
+              : "Preview mode is active until you create an account."}
           </p>
         </div>
       </section>
@@ -113,8 +113,8 @@ export function SettingsPanel() {
           <div>
             <p className="font-semibold text-[var(--charcoal)]">System Summary</p>
             <p className="mt-2 text-sm text-[rgba(117,123,116,0.9)]">
-              Morning breath rituals are supporting steadier pacing, while
-              evening sessions are reducing friction before sleep.
+              Your recent rhythms suggest you return here for steadier mornings,
+              gentler evenings, and moments when your focus needs help settling back in.
             </p>
           </div>
         </div>
@@ -240,7 +240,7 @@ export function SettingsPanel() {
               <div>
                 <p className="font-medium text-[var(--charcoal)]">Log in or sign up</p>
                 <p className="mt-1 text-sm text-[rgba(117,123,116,0.88)]">
-                  Save your archive and ritual preferences across devices.
+                  Save your archive, rituals, and the tone that feels right for you.
                 </p>
               </div>
             </div>

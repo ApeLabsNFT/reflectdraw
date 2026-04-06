@@ -1,36 +1,46 @@
 # ReflectDraw
 
-ReflectDraw is a reflective wellness app for drawing, breath-led regulation, and gentle pattern noticing over time.
+ReflectDraw is a reflective wellness app for the moments when your mind feels loud, your attention keeps drifting, or the day has left too much sitting in your body.
 
-The experience is designed as a calmer journey:
+It brings together drawing, breath-led regulation, and gentle reflection so people have a softer place to begin on:
 
-- land on an editorial front door
-- authenticate with email or Google
-- move directly into onboarding
+- anxious or overstimulated days
+- scattered, restless, or hard-to-hold attention days
+- nights when the body is tired but the mind will not quiet down
+- moments when words alone do not feel like enough
+
+## What The Product Is For
+
+ReflectDraw helps people:
+
+- slow down before reacting
+- notice patterns over time
+- move thoughts and sensations onto the page
+- pair reflection with breath and lower-stimulation rituals
+- return to bedtime or recovery moments more gently
+
+The journey is designed to feel calm and coherent:
+
+- land on the story-led front door
+- create an account with email
+- move into onboarding
 - continue into archive, capture, breath, compare, guides, and settings
 
-This repository contains the live Next.js web app that powers the public product experience across desktop and mobile-responsive layouts.
+## What It Is Not
 
-## Product Direction
-
-ReflectDraw is intentionally positioned as:
-
-- somatic reflection
-- nervous-system regulation support
-- breathwork and bedtime wind-down ritual
-- reflective journaling through images
-
-It is intentionally **not** positioned as:
+ReflectDraw is not:
 
 - a diagnostic tool
-- a crisis service
-- a treatment replacement
-- a passive surveillance app
+- a replacement for therapy, medical care, or emergency support
+- a mental health scoring system
+- a passive surveillance product
+
+The language and product framing are intentionally support-first, reflective, and non-diagnostic.
 
 ## Core Surfaces
 
 - Landing page
-- Auth flow
+- Email auth flow
 - Onboarding
 - Archive
 - Capture ritual
@@ -42,20 +52,22 @@ It is intentionally **not** positioned as:
 - Shop
 - Settings, privacy, and legal
 
-## Tech Stack
+## Content Direction
 
-- Next.js App Router
-- React 19
-- TypeScript
-- Tailwind CSS v4
-- Supabase for auth and backend services
-- Google AI / Gemma-powered reflection pipeline
-- Pinecone for future retrieval and semantic memory
-- PostHog for consent-based analytics
-- Sentry for monitoring
-- Vercel for deployment
+The product voice is written for people who know the feeling of:
 
-## Local Development
+- racing thoughts
+- tight chest or buzzy overwhelm
+- attention that keeps slipping away
+- nights that refuse to settle
+
+The writing aims to sound:
+
+- gentle without becoming vague
+- emotionally intelligent without pretending certainty
+- supportive without drifting into diagnosis or treatment claims
+
+## Running Locally
 
 ```bash
 npm install
@@ -67,36 +79,24 @@ Then open [http://localhost:3000](http://localhost:3000).
 ## Environment Setup
 
 1. Copy `.env.example` to `.env.local`
-2. Fill in the credentials you want to enable
-3. Restart the dev server after changing environment values
-
-The app can still run in a reduced or demo-friendly mode if some integrations are not present.
+2. Add the environment values you want to enable
+3. Restart the dev server after changes
 
 ## Image Planning
 
-The recommended production asset list lives here:
+The production asset plan lives here:
 
 - [docs/reflectdraw-image-inventory.md](./docs/reflectdraw-image-inventory.md)
 
-That document covers how many images are needed, where they belong, and which ones matter first.
-
-## Safety and Privacy
+## Safety Notes
 
 ReflectDraw is built around a few non-negotiables:
 
 - reflective outputs must stay non-diagnostic
-- privacy should be easy to understand and control
-- sensitive operations should stay server-side
+- privacy should be clear and easy to control
+- sensitive operations stay server-side
 - crisis language should be handled conservatively
 
-## Notes on Public Repo Scope
+## Repository Scope
 
-This public repository includes the product experience, UI architecture, and integration surfaces needed to run the app.
-
-Some internal operational details are intentionally kept out of the public-facing documentation and public production routes, including deeper prompt orchestration, diagnostics exposure, and certain deployment-specific implementation choices.
-
-## Deployment
-
-This app is deployed on Vercel and is structured to work well with server-side environment configuration.
-
-Production secrets should never be committed to git.
+This repository contains the live web app experience. Some internal operational details are intentionally not exposed in the public-facing product or documentation.

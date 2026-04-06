@@ -75,10 +75,10 @@ export function WelcomeTransition() {
                       This should only take a moment.
                     </p>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="surface-panel-soft rounded-[1.6rem] p-3">
-                      <p className="eyebrow">Auth owner</p>
-                      <p className="mt-2 font-semibold text-[var(--charcoal)]">Supabase</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="surface-panel-soft rounded-[1.6rem] p-3">
+                      <p className="eyebrow">First feeling</p>
+                      <p className="mt-2 font-semibold text-[var(--charcoal)]">A little more settled</p>
                     </div>
                     <div className="surface-panel-soft rounded-[1.6rem] p-3">
                       <p className="eyebrow">Next stop</p>

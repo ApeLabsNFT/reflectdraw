@@ -70,11 +70,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <div className="surface-panel-soft rounded-[1.5rem] p-4">
                     <p className="eyebrow">ReflectDraw</p>
                     <p className="mt-3 font-serif text-[2rem] leading-[0.98] text-[var(--charcoal)]">
-                      A quieter, more intentional reflection space.
+                      A calmer place for noisy days.
                     </p>
                     <p className="mt-3 text-sm leading-7 text-[rgba(105,113,107,0.92)]">
-                      Desktop gets breathing room for archive, compare, guides,
-                      and longer reading. Mobile stays faster and ritual-first.
+                      Come here when anxiety is loud, focus is slipping, or you
+                      need a softer rhythm before sleep. The app is built to help
+                      you slow down, notice, and continue.
                     </p>
                   </div>
 
@@ -115,11 +116,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
                 <div className="space-y-3">
                   <div className="surface-panel-soft rounded-[1.5rem] p-4">
-                    <p className="eyebrow">Session state</p>
+                    <p className="eyebrow">Your place</p>
                     <p className="mt-2 text-sm leading-7 text-[rgba(105,113,107,0.92)]">
                       {isSignedIn
                         ? `Signed in as ${user?.email ?? "your account"}.`
-                        : "Guest preview is active until you sign in."}
+                        : "Preview mode is active until you sign in."}
                     </p>
                   </div>
                   <Link

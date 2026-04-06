@@ -52,8 +52,8 @@ export function ArchiveFeed() {
           </h1>
           <p className="muted-copy max-w-[42rem] text-[0.98rem]">
             {isSignedIn
-              ? `Welcome back, ${displayName}. This is where your drawings, rituals, and quieter patterns begin to accumulate over time.`
-              : "Guest preview mode is open. Sign in when you're ready to save reflections, build continuity, and unlock the full journey."}
+              ? `Welcome back, ${displayName}. This is where anxious days, scattered moments, and softer nights start to make more sense over time.`
+              : "Preview how ReflectDraw helps you notice patterns across overwhelming days, drifting attention, and the rituals that help you come back to yourself."}
           </p>
         </div>
 
@@ -74,9 +74,9 @@ export function ArchiveFeed() {
             <div>
               <p className="eyebrow">Guest preview</p>
               <p className="mt-3 max-w-[44rem] text-sm leading-7 text-[rgba(105,113,107,0.92)]">
-                Explore the archive and ritual pacing first. When you join, the app
-                moves you through auth, onboarding, and directly back into this space
-                with your own saved continuity.
+                Explore the archive and see how reflections become easier to read over
+                time. When you join, your own drawings, breath moments, and quieter
+                observations begin to gather here.
               </p>
             </div>
             <Link
@@ -156,7 +156,7 @@ export function ArchiveFeed() {
                 Regulate first.
               </p>
               <p className="mt-3 text-sm leading-7 text-[rgba(105,113,107,0.9)]">
-                Arrival breath, extended exhale, and quieter nighttime pacing live here.
+                Use this when your body feels buzzy, your attention is scattered, or you need a softer transition into rest.
               </p>
             </Link>
 

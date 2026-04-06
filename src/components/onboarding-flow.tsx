@@ -88,7 +88,7 @@ export function OnboardingFlow() {
     setError(null);
 
     if (!client) {
-      setError("Supabase auth is not ready yet on this device.");
+      setError("We couldn't open your sanctuary right now. Please try again in a moment.");
       return;
     }
 
@@ -159,9 +159,9 @@ export function OnboardingFlow() {
                   Build the sanctuary before the archive opens.
                 </h1>
                 <p className="max-w-[34rem] text-base leading-8 text-[rgba(245,245,238,0.82)]">
-                  This is where the app learns tone, support boundaries, and
-                  the shape of your personal space, so the journey after login
-                  feels intentional instead of generic.
+                  This is where you shape how ReflectDraw meets you on anxious
+                  days, scattered days, and nights when you need things to get
+                  quieter instead of louder.
                 </p>
               </div>
 

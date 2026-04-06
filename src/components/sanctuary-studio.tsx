@@ -43,11 +43,12 @@ export function SanctuaryStudio() {
       <section className="space-y-3">
         <p className="eyebrow">Breath and sleep support</p>
         <h1 className="serif-heading max-w-[14rem] text-balance text-[3.2rem] leading-[0.92]">
-          Find your center.
+          Come back to yourself.
         </h1>
         <p className="muted-copy text-sm">
-          Follow, not force. These practices are here to help you settle before
-          drawing, while waiting, or as the day winds down.
+          Use these practices when your chest feels tight, your thoughts keep
+          circling, your attention will not stay put, or bedtime feels harder
+          than it should.
         </p>
       </section>
 
@@ -88,12 +89,14 @@ export function SanctuaryStudio() {
 
       <section className="grid grid-cols-2 gap-3">
         <div className="surface-panel-soft rounded-[2rem] p-4">
-          <p className="eyebrow">Duration</p>
+          <p className="eyebrow">When to use it</p>
           <p className="mt-3 font-serif text-[2rem] leading-none text-[var(--charcoal)]">
-            {Math.round(selected.durationSeconds / 60)} min
+            {selected.tone}
           </p>
           <p className="mt-2 text-sm text-[rgba(117,123,116,0.88)]">
-            Gentle pacing with minimal stimulation.
+            {selected.durationSeconds < 120
+              ? "A short reset for buzzy or overloaded moments."
+              : "A longer practice for steadier pacing and deeper exhale."}
           </p>
         </div>
         <div className="surface-panel-soft rounded-[2rem] p-4">
@@ -143,8 +146,9 @@ export function SanctuaryStudio() {
               Nighttime ritual
             </p>
             <p className="mt-2 text-sm text-[rgba(117,123,116,0.88)]">
-              Pair a low-light drawing prompt with wind-down breath, or skip AI
-              entirely and return in the morning for a gentler read.
+              Pair a low-light drawing prompt with wind-down breath when sleep
+              feels far away, or save the reflection for morning if tonight is
+              not the time to read deeply.
             </p>
           </div>
         </div>
