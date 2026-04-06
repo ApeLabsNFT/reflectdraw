@@ -135,30 +135,30 @@ export function OnboardingFlow() {
   }
 
   return (
-    <main className="landing-shell overflow-hidden px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
+    <main className="story-shell overflow-hidden px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
       <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[1460px] flex-col">
         <header className="route-section flex items-center justify-between gap-3">
-          <div className="glass-soft-dark inline-flex items-center rounded-full px-4 py-3">
-            <BrandMark href="/" tone="light" />
+          <div className="story-panel inline-flex items-center rounded-full px-4 py-3">
+            <BrandMark href="/" />
           </div>
-          <div className="glass-soft-dark inline-flex h-12 items-center rounded-full px-5 text-xs font-semibold tracking-[0.14em] text-white uppercase">
+          <div className="story-panel inline-flex h-12 items-center rounded-full px-5 text-xs font-semibold tracking-[0.14em] uppercase">
             Onboarding
           </div>
         </header>
 
         <section className="mt-4 grid flex-1 gap-5 lg:grid-cols-[0.88fr_1.12fr]">
-          <div className="route-section glass-dark flex flex-col justify-between rounded-[2.5rem] p-5 sm:p-6 lg:p-8">
+          <div className="route-section story-frame flex flex-col justify-between rounded-[2.5rem] p-5 sm:p-6 lg:p-8">
             <div className="space-y-6">
-              <div className="glass-soft-dark inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-[0.68rem] font-semibold tracking-[0.16em] text-white uppercase">
-                <Sparkles className="size-3.5" />
+              <div className="story-panel inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-[0.68rem] font-semibold tracking-[0.16em] uppercase">
+                <Sparkles className="size-3.5 text-[var(--sage)]" />
                 Sanctuary setup
               </div>
 
               <div className="space-y-4">
-                <h1 className="display-heading max-w-[12ch] text-balance text-[clamp(3rem,5.2vw,5.3rem)] leading-[0.9] text-white">
+                <h1 className="display-heading max-w-[12ch] text-balance text-[clamp(3rem,5.2vw,5.3rem)] leading-[0.9] text-[var(--charcoal)]">
                   Build the sanctuary before the archive opens.
                 </h1>
-                <p className="max-w-[34rem] text-base leading-8 text-[rgba(245,245,238,0.82)]">
+                <p className="max-w-[34rem] text-base leading-8 text-[rgba(105,113,107,0.94)]">
                   This is where you shape how ReflectDraw meets you on anxious
                   days, scattered days, and nights when you need things to get
                   quieter instead of louder.
@@ -171,20 +171,20 @@ export function OnboardingFlow() {
                   "Choose how the reflection should sound back to you.",
                   "Confirm privacy, scope, and what support the app is actually for.",
                 ].map((item, index) => (
-                  <div key={item} className="glass-soft-dark rounded-[1.8rem] p-4">
-                    <p className="eyebrow text-[rgba(245,245,238,0.62)]">0{index + 1}</p>
-                    <p className="mt-3 text-sm leading-7 text-white/82">{item}</p>
+                  <div key={item} className="story-panel rounded-[1.8rem] p-4">
+                    <p className="eyebrow">0{index + 1}</p>
+                    <p className="mt-3 text-sm leading-7 text-[rgba(105,113,107,0.92)]">{item}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="mt-6 glass-soft-dark rounded-[2rem] p-4">
+            <div className="mt-6 story-panel rounded-[2rem] p-4">
               <div className="flex items-center justify-between gap-4">
-                <p className="font-semibold text-white">Progress</p>
-                <p className="text-sm text-white/68">{Math.round(progress)}%</p>
+                <p className="font-semibold text-[var(--charcoal)]">Progress</p>
+                <p className="text-sm text-[rgba(105,113,107,0.72)]">{Math.round(progress)}%</p>
               </div>
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-[rgba(68,86,72,0.08)]">
                 <div
                   className="h-full rounded-full bg-[linear-gradient(90deg,#f6f1df,#d3e2d3)]"
                   style={{ width: `${progress}%` }}

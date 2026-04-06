@@ -24,32 +24,32 @@ export function WelcomeTransition() {
   }, [displayName, isLoading, isOnboarded, isSignedIn, router]);
 
   return (
-    <main className="landing-shell min-h-screen overflow-hidden px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
+    <main className="story-shell min-h-screen overflow-hidden px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
       <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[920px] flex-col">
         <header className="route-section flex items-center justify-between gap-3">
-          <div className="glass-soft-dark inline-flex items-center rounded-full px-4 py-3">
-            <BrandMark href="/" tone="light" />
+          <div className="story-panel inline-flex items-center rounded-full px-4 py-3">
+            <BrandMark href="/" />
           </div>
-          <div className="glass-soft-dark inline-flex h-12 items-center rounded-full px-5 text-xs font-semibold tracking-[0.14em] text-white uppercase">
+          <div className="story-panel inline-flex h-12 items-center rounded-full px-5 text-xs font-semibold tracking-[0.14em] uppercase">
             Routing your journey
           </div>
         </header>
 
         <section className="route-section mt-4 flex flex-1 items-center">
-          <div className="glass-dark grid w-full gap-5 rounded-[2.8rem] p-5 sm:p-6 lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
+          <div className="story-frame grid w-full gap-5 rounded-[2.8rem] p-5 sm:p-6 lg:grid-cols-[0.95fr_1.05fr] lg:p-8">
             <div className="space-y-4">
-              <div className="glass-soft-dark inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-[0.68rem] font-semibold tracking-[0.16em] text-white uppercase">
-                <Wind className="size-3.5" />
+              <div className="story-panel inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-[0.68rem] font-semibold tracking-[0.16em] uppercase">
+                <Wind className="size-3.5 text-[var(--sage)]" />
                 Opening the sanctuary
               </div>
-              <h1 className="display-heading max-w-[11ch] text-[clamp(2.8rem,5.2vw,5rem)] leading-[0.92] text-white">
+              <h1 className="display-heading max-w-[11ch] text-[clamp(2.8rem,5.2vw,5rem)] leading-[0.92] text-[var(--charcoal)]">
                 {isLoading
                   ? "Settling your session."
                   : isSignedIn && !isOnboarded
                     ? `Welcome, ${displayName}. Onboarding is next.`
                     : "Welcome back. Returning you to the archive."}
               </h1>
-              <p className="max-w-[32rem] text-base leading-8 text-[rgba(245,245,238,0.8)]">
+              <p className="max-w-[32rem] text-base leading-8 text-[rgba(105,113,107,0.92)]">
                 ReflectDraw now closes the loop after auth. New users continue
                 into onboarding, and returning users land back inside their
                 sanctuary without detours.

@@ -202,7 +202,7 @@ export function EmailAuthForm({
                   required
                   value={fullName}
                   onChange={(event) => setFullName(event.target.value)}
-                  className="soft-input h-14 w-full px-4 text-sm outline-none"
+                  className="soft-input h-14 w-full px-4 text-sm text-[var(--charcoal)] outline-none"
                   placeholder="What should we call you?"
                 />
               </label>
@@ -219,7 +219,7 @@ export function EmailAuthForm({
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  className="w-full bg-transparent text-sm outline-none"
+                  className="w-full bg-transparent text-sm text-[var(--charcoal)] outline-none"
                   placeholder="you@example.com"
                 />
               </div>
@@ -235,7 +235,7 @@ export function EmailAuthForm({
                 minLength={8}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="soft-input h-14 w-full px-4 text-sm outline-none"
+                className="soft-input h-14 w-full px-4 text-sm text-[var(--charcoal)] outline-none"
                 placeholder="At least 8 characters"
               />
             </label>
